@@ -6,10 +6,13 @@ root: intro
 parts:
 - caption: Life Cycle
   chapters:
+  - file: LifeCycle
 - caption: Pratical Hands-on skills
   chapters:
   - file: LendingClub
 - caption: Infrastructure
   chapters:
+  - file: Infrastructure
 - caption: Case Study
   chapters:
+  - file: CaseStudy
