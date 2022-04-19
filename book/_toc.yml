@@ -5,8 +5,11 @@ format: jb-book
 root: intro
 parts:
 - caption: Life Cycle
+  chapters:
 - caption: Pratical Hands-on skills
   chapters:
   - file: LendingClub
 - caption: Infrastructure
+  chapters:
 - caption: Case Study
+  chapters:
