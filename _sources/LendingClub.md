@@ -19,7 +19,7 @@ kernelspec:
 ## References
 
 - https://www.lendingclub.com/investing/investor-education/interest-rates-and-fees
-- https://www.kaggle.com/code/aayush7kumar/lendingclub-loan-data-prediction
+- https://www.kaggle.com/code/faressayah/lending-club-loan-defaulters-prediction
 - https://www.kaggle.com/datasets/wordsforthewise/lending-club
 - [Peer-to-peer sturcture](https://brunch.co.kr/@beyondplatform/4)
 
@@ -347,7 +347,6 @@ def is_outlier(x):
 
     return (x > upper) | (x < lower)
 
-
 annual_inc = df.loc[~df.groupby(['loan_status', 'verification_status'])['annual_inc'].apply(is_outlier), 
     ['loan_status', 'verification_status', 'annual_inc']].hvplot.hist(
     y='annual_inc', by='loan_status', groupby='verification_status', subplots=False, 
@@ -355,6 +354,13 @@ annual_inc = df.loc[~df.groupby(['loan_status', 'verification_status'])['annual_
     xlabel='Annual Income', ylabel='Counts', legend='top', yformatter='%d', xformatter='%d', dynamic=False
 )
 annual_inc
+```
+
+* Q: What is the difference between verified and not verified who has much high/lower income?
+
+```{code-cell} ipython3
+df.loc[df.groupby(['loan_status', 'verification_status'])['annual_inc'].apply(is_outlier), 
+['loan_status', 'verification_status', 'annual_inc']].groupby(['loan_status', 'verification_status'])['annual_inc'].describe()
 ```
 
 ### emp_title & emp_length
@@ -431,13 +437,19 @@ emp_length.opts(
 - issue_d: The month which the loan was funded.
 - earliest_cr_line: The month the borrower's earliest reported credit line was opened.
 
-Most people try to do the loan near the 2016 and started to create their credit line at 2000
+Red is the people who charge-off and the blue is the people who fully paied. Most people try to do the loan near the 2016 and started to create their credit line at 2000. 
+
+```{code-cell} ipython3
+import calendar
+
+month_dict = {m: n for n, m in enumerate([calendar.month_abbr[i] for i in range(1, 13)], 1)}
+
+df['issue_d'] = pd.to_datetime(df['issue_d'].str.split('-').apply(lambda x: f'{x[1]}-{month_dict.get(x[0])}'))
+df['earliest_cr_line'] = pd.to_datetime(df['earliest_cr_line'].str.split('-').apply(lambda x: f'{x[1]}-{month_dict.get(x[0])}'))
+```
 
 ```{code-cell} ipython3
 :tags: [hide-input]
-
-df['issue_d'] = pd.to_datetime(df['issue_d'])
-df['earliest_cr_line'] = pd.to_datetime(df['earliest_cr_line'])
 
 fully_paid = df.loc[df['loan_status']=='Fully Paid', 'issue_d'].hvplot.hist(bins=35) 
 charged_off = df.loc[df['loan_status']=='Charged Off', 'issue_d'].hvplot.hist(bins=35)
@@ -445,7 +457,7 @@ charged_off = df.loc[df['loan_status']=='Charged Off', 'issue_d'].hvplot.hist(bi
 # fully_paid * charged_off
 loan_issue_date = (fully_paid * charged_off).opts(
     title='Loan Issue Date Distribution', xlabel='Loan Issue Date', ylabel='Count',
-    width=400, height=350, legend_cols=2, legend_position='top_right'
+    width=350, height=350, legend_cols=2, legend_position='top_right'
 ).opts(xrotation=45, yformatter='%d')
 
 fully_paid = df.loc[df['loan_status']=='Fully Paid', 'earliest_cr_line'].hvplot.hist(bins=35) 
@@ -453,15 +465,34 @@ charged_off = df.loc[df['loan_status']=='Charged Off', 'earliest_cr_line'].hvplo
 
 earliest_cr_line = (fully_paid * charged_off).opts(
     title='Earliest reported credit line', xlabel='earliest_cr_line', ylabel='Count',
-    width=400, height=350, legend_cols=2, legend_position='top_right'
+    width=350, height=350, legend_cols=2, legend_position='top_right'
 ).opts(xrotation=45, yformatter='%d')
 
 loan_issue_date + earliest_cr_line
 ```
 
+* Q: Are there anyone who applied before the credit line is reported?
+
+```{code-cell} ipython3
+issue_report = df['issue_d'] < df['earliest_cr_line']
+print(f'The percentage that who applied before the credit line is reported: {(issue_report).sum() / len(df)}')
+```
+
+* Q: Are there any difference between months? 
+
+```{code-cell} ipython3
+df['issue_d_month'] = df['issue_d'].dt.month
+
+issue_d_month = df.groupby(['loan_status'])[['issue_d_month']].value_counts().rename('Count').hvplot.bar()
+issue_d_month.opts(
+    title="Issue Date Distribution in every month by Loan Status", xlabel='Month', ylabel='Count',
+    width=700, height=450, show_legend=True, yformatter='%d'
+)
+```
+
 ### title
 
-title is similar to the purpose, will drop it later
+title is duplicated with the `purpose` column, will drop it later
 
 ```{code-cell} ipython3
 print(df['title'].isnull().sum())
@@ -475,9 +506,25 @@ df['title'].value_counts()[:10]
 
 ### dti, open_acc, total_acc
 
-- dti: A ratio calculated using the borrower's total monthly debt payments on the total debt obligations, excluding mortgage and the requested LC loan, divided by the borrowe's self-reported monthly income.
+```{admonition} What Is Debt-to-Income Ratio?
+
+Your debt-to-income ratio compares your debt payments to your monthly gross income, or how much you earn each month before taxes and other deductions. Your DTI ratio gives lenders a clearer picture of your current debt and income, and is used to determine how much money you can afford to responsibly borrow.
+
+Monthly debt may include:
+
+- Minimum credit card payments
+- Loan payments (such as car payments, student loan payments, personal loans, and other loan payments)
+- Monthly alimony or child support payments
+- Rent payment or mortgage payments
+- Other debts included in your credit report
+
+```
+
+- dti: A ratio calculated using the borrower's total monthly debt payments on the total debt obligations, excluding mortgage and the requested LC loan, divided by the borrower's self-reported monthly income.
 - open_acc: The number of open credit lines in the borrower's credit file.
 - total_acc: The total number of credit lines currently in the borrower's credit file.
+
+[NerdWallet website](https://www.nerdwallet.com/reviews/loans/personal-loans/lendingclub-personal-loans) says that the maximum allowed DTI ratio is 40% for single applicants and 35% for joint applicants. In the [Lending Club website](https://www.lendingclub.com/loans/resource-center/calculating-debt-to-income), seems like over 40% DTI is not a good signal, they suggest some way to improve the DTI ratio.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -486,27 +533,22 @@ df['dti'].describe().reset_index().hvplot.table(title='DTI Table Description', h
 # Can DTI be 999?
 ```
 
-```{code-cell} ipython3
-:tags: [hide-input]
+It seems like the DTI over 60 can be treated as outlier data, may need to drop them.
 
-dti = df.hvplot.hist(
-    y='dti', bins=50, width=400, height=350, 
-    title="dti Distribution", xlabel='dti', ylabel='Count',
-    yformatter='%d'
-)
-dti
+```{code-cell} ipython3
+df.loc[df['dti'] > 40].groupby(['loan_status'])['dti'].describe().hvplot.table(title='DTI > 40% Table Description', height=100)
 ```
 
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-dti_sub = df.loc[df['dti'] <= 50].hvplot.hist(
+dti_sub = df.loc[df['dti'] <= 40].hvplot.hist(
     y='dti', by='loan_status', bins=50, width=400, height=350, subplots=False, 
     title="dti(<=50) Distribution", xlabel='dti', ylabel='Count', shared_axes=False,
     alpha=0.4, legend='top', yformatter='%d'
 )
 
-dti_sub2 = df.loc[df['dti'] > 50].hvplot.hist(
+dti_sub2 = df.loc[df['dti'] > 40].hvplot.hist(
     y='dti', by='loan_status', bins=100, width=400, height=350, subplots=False, 
     title="dti(>50) Distribution", xlabel='dti', ylabel='Count', shared_axes=False,
     alpha=0.4, legend='top', yformatter='%d'
@@ -695,20 +737,91 @@ print(f'Data shape: {df.shape}')
 print(df.columns)
 ```
 
-We will not use following columns: 
-- `title`: duplicated with purpose
+According to our EDA, We will not use following columns: 
+
+- `title`: duplicated with `purpose`
 - `emp_title`: too many unique jobs, but seems like some of them are duplicated
+- `issue_d`, `earliest_cr_line`: nothing interesting
 
 Other columns 
-- `emp_length`: add 'unknown' for NaN values
-- `pub_rec`, `pub_rec_bankruptcies`: convert as binary
-- `verification_status`: combine verified together
+- `term`: change its' type to integer
+- `grade`, `sub_grade`, `home_ownership`, `purpose`, `initial_list_status`, `application_type`, `addr_state`: do label encoding
+- `emp_length`: add 'unknown' for NaN values and do the label encoding
+- `verification_status`: convert `source verified` as `verified` together and do the label encoding
+- `dti`: drop which dti over 60%
+- `revol_bal`: drop which has over $ 250,000 balance
+- `revol_util`: drop which has over 120% utilization rate
+- `pub_rec`, `pub_rec_bankruptcies`: convert as binary, who has ever had the record or not
+- `mort_acc`: can convert to categories [0, 1, 2, 3, 4, 5, 5+] and do the label encoding
+- `loan_status`: target column, do the label encoding
 
 ```{code-cell} ipython3
-df.drop(columns=['title', 'emp_title'], inplace=True)
+from collections import defaultdict
+
+# drop columns values
+df.drop(columns=['title', 'emp_title', 'issue_d', 'earliest_cr_line'], inplace=True)
+print(f"- Dropped columns: {['title', 'emp_title', 'issue_d', 'earliest_cr_line']}")
+
+# term
+df['term'] = df['term'].str.rstrip('months').astype(int)
+print('- Type changed into integer: term')
+
+# need a label encoding
+encode_dict = defaultdict(dict)
+for c in ['grade', 'sub_grade', 'home_ownership', 'purpose', 'initial_list_status', 'application_type', 'addr_state']:
+    encode_dict[c]['v2i'] = {v: i for i, v in enumerate(sorted(df[c].unique()))}
+    encode_dict[c]['i2v'] = {i: v for v, i in encode_dict[c]['v2i'].items()}
+    df[c] = df[c].map(encode_dict[c]['v2i'])
+    print(f'- Label encoded: {c}')
+
+# emp_length
+c = 'emp_length'
+df[c].fillna('unknown', inplace=True)
+emp_values = ['< 1 year', '1 year', '2 years', '3 years', '4 years', '5 years', '6 years', '7 years', '8 years', '9 years', '10+ years']
+encode_dict[c]['v2i'] = {v: i for i, v in enumerate(emp_values)}
+encode_dict[c]['v2i']['unknown'] = 99
+encode_dict[c]['i2v'] = {i: v for v, i in encode_dict[c]['v2i'].items()}
+df[c] = df[c].map(encode_dict[c]['v2i'])
+print(f'- Label encoded: {c}')
+
+# verification_status
+df['verification_status'].replace(to_replace='Source Verified', value='Verified', inplace=True)
+print(f'- Merged "Source Verified" into "Verified": {c}')
+encode_dict[c]['v2i'] = {v: i for i, v in enumerate(sorted(df[c].unique()))}
+encode_dict[c]['i2v'] = {i: v for v, i in encode_dict[c]['v2i'].items()}
+print(f'- Label encoded: {c}')
+
+# dti, revol_bal, revol_util
+for c, thres in zip(['dti', 'revol_bal', 'revol_util'], [60, 250000, 120]):
+    drop_idx = df.index[df[c] > thres]
+    df.drop(index=drop_idx, inplace=True)
+    print(f'- Dropped # of {(len(drop_idx)/len(df))*100:.2f}% ({len(drop_idx)}) data: {c}')
+
+# pub_rec, pub_rec_bankruptcies
+for c in ['pub_rec', 'pub_rec_bankruptcies']:
+    df[c].apply(lambda x: 0 if x == 0 else 1)
+    print(f'- Convert into binary feature data: {c}')
+
+# mort_acc
+c = 'mort_acc'
+df.loc[df[c] > 5, c] = 6
+mort_values = ['0', '1', '2', '3', '4', '5', '5+']
+encode_dict[c]['v2i'] = {v: i for i, v in enumerate(mort_values)}
+encode_dict[c]['i2v'] = {i: v for v, i in encode_dict[c]['v2i'].items()}
+df.loc[df[c] > 5, c] = 6
+print(f'- Label encoded: {c}')
+
+# target column encoding
+c = 'loan_status'
+encode_dict[c]['v2i'] = {'Fully Paid': 0, 'Charged Off': 1}
+encode_dict[c]['i2v'] = {i: v for v, i in encode_dict[c]['v2i'].items()}
+df[c] = df[c].map(encode_dict[c]['v2i'])
+print(f'- Label encoded: {c}')
+
+df.reset_index(drop=True, inplace=True)
 ```
 
-check missing data
+Check missing data
 
 ```{code-cell} ipython3
 for column in df.columns:
@@ -718,11 +831,23 @@ for column in df.columns:
         print(f"'{column}': number of missing values {missing_col}({missing_percentage:.3f}%)")
 ```
 
-- 'emp_length' can add 'unknown' for NaN values
-- remove some outlier: dti, revol_util
-- 
+Since the data is not that much we will drop these records.
 
-+++
+```{code-cell} ipython3
+for c in ['dti', 'revol_util', 'mort_acc', 'pub_rec_bankruptcies']:
+    drop_idx = df.index[df[c].isnull()]
+    df.drop(index=drop_idx, inplace=True)
+df.reset_index(drop=True, inplace=True)
+df_loan_status_counts = df['loan_status'].value_counts()
+print(f'The total number of records is {len(df)}')
+print(f"- loan_status = Fully Paid: {df_loan_status_counts.iloc[0]}")
+print(f"- loan_status = Charged Off: {df_loan_status_counts.iloc[1]}")
+```
+
+```{code-cell} ipython3
+# Save the processed data
+# df.to_csv(data_path / 'accepted_processed.csv', index=False, encoding='utf-8')
+```
 
 ## Modeling
 
