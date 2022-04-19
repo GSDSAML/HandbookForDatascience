@@ -6,9 +6,7 @@ root: intro
 parts:
 - caption: Life Cycle
 - caption: Pratical Hands-on skills
-  numbered: True  
   chapters:
   - file: LendingClub
-
 - caption: Infrastructure
 - caption: Case Study
