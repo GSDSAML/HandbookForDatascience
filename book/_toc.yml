@@ -1,0 +1,14 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+parts:
+- caption: Life Cycle
+- caption: Pratical Hands-on skills
+  numbered: True  
+  chapters:
+  - file: LendingClub
+
+- caption: Infrastructure
+- caption: Case Study
