@@ -914,7 +914,7 @@ model = RandomForestClassifier(n_jobs=8, verbose=1)
 model.fit(X_train, y_train)
 
 
-# In[ ]:
+# In[59]:
 
 
 y_pred = model.predict(X_test)
@@ -924,14 +924,14 @@ print(rpt)
 
 # ## Explanation on Models
 
-# In[ ]:
+# In[60]:
 
 
 import shap
 shap.initjs()
 
 
-# In[ ]:
+# In[61]:
 
 
 np.random.seed(78)
@@ -945,33 +945,33 @@ y_sampled = y_correct.loc[rnd_idx]
 X_sampled = X_test.loc[rnd_idx]
 
 
-# In[ ]:
+# In[62]:
 
 
 explainer = shap.TreeExplainer(model)
 shap_values = explainer.shap_values(X_sampled, y_sampled)
 
 
-# In[ ]:
+# In[63]:
 
 
 shap.summary_plot(shap_values, X_sampled, alpha=0.8, color_bar=True)
 
 
-# In[ ]:
+# In[64]:
 
 
 label = 1
 shap.dependence_plot('sub_grade', shap_values[label], features=X_sampled)
 
 
-# In[ ]:
+# In[65]:
 
 
 shap_values[1].shape
 
 
-# In[ ]:
+# In[66]:
 
 
 label = 0
@@ -979,7 +979,7 @@ sample_index = 0
 shap.force_plot(explainer.expected_value[label], shap_values[label][sample_index], features=X_sampled.iloc[sample_index])
 
 
-# In[ ]:
+# In[67]:
 
 
 label = 1
