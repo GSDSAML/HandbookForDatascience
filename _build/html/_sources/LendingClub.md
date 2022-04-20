@@ -82,6 +82,9 @@ data_path = main_path.parent / 'data' / 'p2p' / 'lending_club' / 'processed'
 
 ## Exploratory Data Analysis
 
++++
+
+
 ### Data Description
 
 |LoanStatNew|Description|
@@ -785,10 +788,13 @@ df[c] = df[c].map(encode_dict[c]['v2i'])
 print(f'- Label encoded: {c}')
 
 # verification_status
-df['verification_status'].replace(to_replace='Source Verified', value='Verified', inplace=True)
+c = 'verification_status'
+df[c].replace(to_replace='Source Verified', value='Verified', inplace=True)
 print(f'- Merged "Source Verified" into "Verified": {c}')
-encode_dict[c]['v2i'] = {v: i for i, v in enumerate(sorted(df[c].unique()))}
+veri_values = ['Not Verified', 'Verified']
+encode_dict[c]['v2i'] = {v: i for i, v in enumerate(veri_values)}
 encode_dict[c]['i2v'] = {i: v for v, i in encode_dict[c]['v2i'].items()}
+df[c] = df[c].map(encode_dict[c]['v2i'])
 print(f'- Label encoded: {c}')
 
 # dti, revol_bal, revol_util
@@ -846,13 +852,88 @@ print(f"- loan_status = Charged Off: {df_loan_status_counts.iloc[1]}")
 
 ```{code-cell} ipython3
 # Save the processed data
+# import pickle
+# with (data_path / 'encode_dict.pickle').open('wb') as file:
+#     pickle.dump(encode_dict, file)
 # df.to_csv(data_path / 'accepted_processed.csv', index=False, encoding='utf-8')
 ```
 
 ## Modeling
 
-+++
+```{code-cell} ipython3
+from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+
+# Load the processed data
+df = pd.read_csv(data_path / 'accepted_processed.csv')
+y = df['loan_status']
+X = df.loc[:, ~df.columns.isin(['loan_status'])]
+```
+
+```{code-cell} ipython3
+spiliter = StratifiedShuffleSplit(n_splits=1, test_size=0.1)
+train_idx, test_idx = list(*spiliter.split(X, y))
+X_train, y_train = X.loc[train_idx], y.loc[train_idx]
+X_test, y_test = X.loc[test_idx], y.loc[test_idx]
+```
+
+```{code-cell} ipython3
+model = RandomForestClassifier(n_jobs=8, verbose=1)
+model.fit(X_train, y_train)
+```
+
+```{code-cell} ipython3
+y_pred = model.predict(X_test)
+rpt = classification_report(y_true=y_test, y_pred=y_pred)
+print(rpt)
+```
 
 ## Explanation on Models
 
-+++
+```{code-cell} ipython3
+import shap
+shap.initjs()
+```
+
+```{code-cell} ipython3
+np.random.seed(78)
+# pick 20 right predictions for each class
+y_correct = y_test[y_test == y_pred]
+num_samples = 10
+rnd_idx_0 = np.random.choice(y_correct[y_correct == 0].index, num_samples) 
+rnd_idx_1 = np.random.choice(y_correct[y_correct == 1].index, num_samples)
+rnd_idx = np.concatenate((rnd_idx_0, rnd_idx_1))
+y_sampled = y_correct.loc[rnd_idx]
+X_sampled = X_test.loc[rnd_idx]
+```
+
+```{code-cell} ipython3
+explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(X_sampled, y_sampled)
+```
+
+```{code-cell} ipython3
+shap.summary_plot(shap_values, X_sampled, alpha=0.8, color_bar=True)
+```
+
+```{code-cell} ipython3
+label = 1
+shap.dependence_plot('sub_grade', shap_values[label], features=X_sampled)
+```
+
+```{code-cell} ipython3
+shap_values[1].shape
+```
+
+```{code-cell} ipython3
+label = 0
+sample_index = 0
+shap.force_plot(explainer.expected_value[label], shap_values[label][sample_index], features=X_sampled.iloc[sample_index])
+```
+
+```{code-cell} ipython3
+label = 1
+sample_index = 10
+shap.force_plot(explainer.expected_value[label], shap_values[label][sample_index], features=X_sampled.iloc[sample_index])
+```
