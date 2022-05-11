@@ -43,9 +43,15 @@ from sklearn.metrics import mean_absolute_error
 # In[2]:
 
 
+path = "/home/alexbui/workspace/HandbookForDatascience/notebooks/data/"
+
+
+# In[3]:
+
+
 # Skewness of each attribute
 # cols = ["CRIM","ZN","INDUS","CHAS","NOX","RM","AGE","DIS","RAD","TAX","PTRATIO","B","LSTAT","MEDV"]
-rawdata = pd.read_csv('data/housing_10X_outlier_missing.csv', header=0)
+rawdata = pd.read_csv(path + '/housing_10X_outlier_missing.csv', header=0)
 rawdata[rawdata == -1] = np.nan
 rawdata.skew().abs().sort_values()
 
@@ -63,7 +69,7 @@ rawdata.skew().abs().sort_values()
 #     - Skewness <= 1, mean should be used to process outlier
 #     - Skewness > 1, median should be used to process outlier
 
-# In[ ]:
+# In[4]:
 
 
 # load data from csv 
@@ -111,28 +117,28 @@ def load_csv(filename, cols=None, header=None):
     return data
 
 
-# In[ ]:
+# In[5]:
 
 
-processed_data = load_csv('data/housing_10X_outlier_missing.csv', header=0)
+processed_data = load_csv(path + 'housing_10X_outlier_missing.csv', header=0)
 
 
 # ### 1.2 Dataset preparation
 
-# In[ ]:
+# In[6]:
 
 
 X = processed_data.iloc[:,1:14]
 y = processed_data['MEDV']
 
 
-# In[ ]:
+# In[7]:
 
 
 from sklearn.model_selection import train_test_split
 
 
-# In[ ]:
+# In[8]:
 
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
@@ -145,7 +151,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # - Random Forest
 # - XGBoost
 
-# In[ ]:
+# In[9]:
 
 
 from sklearn.metrics import mean_absolute_error as mae
@@ -154,7 +160,7 @@ from sklearn.tree import DecisionTreeRegressor
 import xgboost as xgb
 
 
-# In[ ]:
+# In[10]:
 
 
 dtree = DecisionTreeRegressor().fit(X_train, y_train)
@@ -162,7 +168,7 @@ dt_pred = dtree.predict(X_test)
 print("mae loss of decision tree", mae(dt_pred, y_test))
 
 
-# In[ ]:
+# In[11]:
 
 
 # define random forest regressor
@@ -174,7 +180,7 @@ mae_loss = mae(y_pred, y_test)  # Evaluating the Algorithm by SKLearn
 print("mae loss of random forest:%.2f" % mae_loss)
 
 
-# In[ ]:
+# In[12]:
 
 
 xgb_model = xgb.XGBRFRegressor().fit(X_train, y_train)
@@ -184,14 +190,14 @@ print("mae loss of xgb", mae(xgb_pred, y_test))
 
 # ## 3. Feature Engineering
 
-# In[ ]:
+# In[13]:
 
 
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-# In[ ]:
+# In[14]:
 
 
 corr = processed_data.iloc[:,1:].corr()
@@ -202,7 +208,7 @@ plt.show()
 
 # ***Strategy 1: Select high correlated features using Pearson Correlation***
 
-# In[ ]:
+# In[15]:
 
 
 # get abs(correlation) between attributes and MEDV
@@ -214,7 +220,7 @@ high_corr_var = full_data_corr_wMEDV[full_data_corr_wMEDV > 0.5].keys()
 high_corr_var
 
 
-# In[ ]:
+# In[16]:
 
 
 xgb_model2 = xgb.XGBRFRegressor().fit(X_train[['LSTAT', 'INDUS', 'TAX', 'NOX', 'RM', 'AGE', 'RAD']], y_train)
@@ -224,13 +230,13 @@ print("mae loss of xgb", mae(xgb_pred2, y_test))
 
 # ***Strategy 2: Using Feature Selection Feature of Sklearn***
 
-# In[ ]:
+# In[17]:
 
 
 from sklearn.feature_selection import RFE
 
 
-# In[ ]:
+# In[18]:
 
 
 xgb_model2 = xgb.XGBRFRegressor()
@@ -242,7 +248,7 @@ rfe_pred = xgb_model2.predict(x_test_rfe)
 print("mae loss of xgb w/ rfe", mae(rfe_pred, y_test))
 
 
-# In[ ]:
+# In[19]:
 
 
 lowest = 9999
@@ -261,7 +267,7 @@ for i in range(13):
 print(lowest, best_n)
 
 
-# In[ ]:
+# In[20]:
 
 
 lowest = 9999
@@ -283,7 +289,7 @@ print(lowest, best_n)
 # ## 4. Model Explanation
 # We will explain model prediction using SHAP
 
-# In[ ]:
+# In[21]:
 
 
 import shap
@@ -292,7 +298,7 @@ shap.initjs()
 
 # ### 4.1 SHAP Initialization
 
-# In[ ]:
+# In[22]:
 
 
 # shap will automatically select explainer for a given model.
@@ -310,7 +316,7 @@ shap_values = explainer(X_train)
 # 1. Bee plot helps us understand outcome values corresponding to high/low values of features
 # 2. Bar plot presents a global view of feature importance, which don't consider sign (pos/neg) of the contribution.
 
-# In[ ]:
+# In[23]:
 
 
 shap.summary_plot(shap_values)
@@ -318,7 +324,7 @@ shap.summary_plot(shap_values)
 
 # As can be seen, higher LSTAT values correspond to lower SHAP values. LSTAT is the ratio of lower status of the population. It means that the more low-income population is, the less the price is. Similarly, the bigger the more expensive.
 
-# In[ ]:
+# In[24]:
 
 
 shap.summary_plot(shap_values, plot_type='bar')
@@ -326,13 +332,13 @@ shap.summary_plot(shap_values, plot_type='bar')
 
 # ***Then, we show attribution of instance predictions***
 
-# In[ ]:
+# In[25]:
 
 
 shap.force_plot(explainer.expected_value, shap_values[0].values, features=X_train.columns)
 
 
-# In[ ]:
+# In[26]:
 
 
 shap.force_plot(explainer.expected_value, shap_values[100].values, features=X_train.columns)
