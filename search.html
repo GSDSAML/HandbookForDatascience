@@ -92,7 +92,7 @@ const thebe_selector_output = ".output, .cell_output"
     </a>
 </div><form class="bd-search d-flex align-items-center" action="#" method="get">
   <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="이 책 검색 ..." aria-label="이 책 검색 ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
         <ul class="nav bd-sidenav">
@@ -102,7 +102,7 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
+<p class="caption">
  <span class="caption-text">
   Life Cycle
  </span>
@@ -114,7 +114,7 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
+<p class="caption">
  <span class="caption-text">
   Pratical Hands-on skills
  </span>
@@ -126,7 +126,7 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
+<p class="caption">
  <span class="caption-text">
   Infrastructure
  </span>
@@ -138,7 +138,7 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
+<p class="caption">
  <span class="caption-text">
   Case Study
  </span>
@@ -174,8 +174,8 @@ const thebe_selector_output = ".output, .cell_output"
             
             <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
                 data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                aria-expanded="true" aria-label="탐색 전환" aria-controls="site-navigation"
+                title="탐색 전환" data-toggle="tooltip" data-placement="left">
                 <i class="fas fa-bars"></i>
                 <i class="fas fa-arrow-left"></i>
                 <i class="fas fa-arrow-up"></i>
@@ -190,12 +190,12 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="dropdown-buttons sourcebuttons">
         <a class="repository-button"
             href="https://github.com/GSDSAML/HandbookForDatascience"><button type="button" class="btn btn-secondary topbarbtn"
-                data-toggle="tooltip" data-placement="left" title="Source repository"><i
-                    class="fab fa-github"></i>repository</button></a>
+                data-toggle="tooltip" data-placement="left" title="소스 저장소"><i
+                    class="fab fa-github"></i>저장소</button></a>
         <a class="issues-button"
             href="https://github.com/GSDSAML/HandbookForDatascience/issues/new?title=Issue%20on%20page%20%2Fsearch.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
-                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+                title="이슈 열기"><i class="fas fa-lightbulb"></i>열린 문제</button></a>
         
     </div>
 </div>
@@ -203,8 +203,8 @@ const thebe_selector_output = ".output, .cell_output"
             <!-- Full screen (wrap in <a> to have style consistency -->
 
 <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="전체 화면으로보기"
+        title="전체 화면으로보기"><i
             class="fas fa-expand"></i></button></a>
 
             <!-- Launch buttons -->
@@ -234,14 +234,13 @@ const thebe_selector_output = ".output, .cell_output"
                 
   <h1 id="search-documentation">Search</h1>
   
-  <noscript>
-  <div class="admonition warning">
+  <div id="fallback" class="admonition warning">
+  <script>$('#fallback').hide();</script>
   <p>
     Please activate JavaScript to enable the search
     functionality.
   </p>
   </div>
-  </noscript>
   
   
   <p>
@@ -251,7 +250,7 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <form action="" method="get">
-    <input type="text" name="q" aria-labelledby="search-documentation" value="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+    <input type="text" name="q" aria-labelledby="search-documentation" value="" />
     <input type="submit" value="search" />
     <span id="search-progress" style="padding-left: 10px"></span>
   </form>
@@ -275,9 +274,9 @@ const thebe_selector_output = ".output, .cell_output"
     <footer class="footer">
   <p>
     
-      By GSDS AML<br/>
+      으로 GSDS AML<br/>
     
-        &copy; Copyright 2021.<br/>
+        &copy; 저작권 2021.<br/>
   </p>
 </footer>
 </main>
