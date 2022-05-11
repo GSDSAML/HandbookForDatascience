@@ -53,9 +53,13 @@ from sklearn.metrics import mean_absolute_error
 We use a synthesized version of the original dataset, which is 10X bigger and has outlier and missing values.
 
 ```{code-cell} ipython3
+path = "/home/alexbui/workspace/HandbookForDatascience/notebooks/data/"
+```
+
+```{code-cell} ipython3
 # Skewness of each attribute
 # cols = ["CRIM","ZN","INDUS","CHAS","NOX","RM","AGE","DIS","RAD","TAX","PTRATIO","B","LSTAT","MEDV"]
-rawdata = pd.read_csv('data/housing_10X_outlier_missing.csv', header=0)
+rawdata = pd.read_csv(path + '/housing_10X_outlier_missing.csv', header=0)
 rawdata[rawdata == -1] = np.nan
 rawdata.skew().abs().sort_values()
 ```
@@ -122,10 +126,14 @@ def load_csv(filename, cols=None, header=None):
 ```
 
 ```{code-cell} ipython3
-processed_data = load_csv('data/housing_10X_outlier_missing.csv', header=0)
+processed_data = load_csv(path + 'housing_10X_outlier_missing.csv', header=0)
 ```
 
 ### 1.2 Dataset preparation
+
++++
+
+
 
 ```{code-cell} ipython3
 X = processed_data.iloc[:,1:14]
