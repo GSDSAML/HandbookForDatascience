@@ -22,7 +22,7 @@
 
 # ## 2. Additional Data Sources
 # <figure>
-# <img src="./figs/ml_system.png" alt="ml_system" width="80%" height="80%">
+# <img src="./_images/ml_system.png" alt="ml_system" width="80%" height="80%">
 # <figcaption>Image Source From https://proceedings.neurips.cc/paper/2015/file/86df7dcfd896fcaf2674f757a2463eba-Paper.pdf</figcaption>
 # </figure>
 # 
@@ -31,7 +31,7 @@
 # ### 2.1 Weather Data
 # 
 # <figure>
-# <img width="500px" src="./figs/seoul_weather.png" alt="ml_system" width="80%" height="80%">
+# <img width="500px" src="./_images/seoul_weather.png" alt="ml_system" width="80%" height="80%">
 # <figcaption>Seoul Weather from worldweatheronline.com</figcaption>
 # </figure>
 # 
@@ -40,7 +40,7 @@
 # ### 2.2 Holiday Information
 # 
 # <figure>
-# <img width="500px" src="./figs/holiday.png" alt="ml_system" width="80%" height="80%">
+# <img width="500px" src="./_images/holiday.png" alt="ml_system" width="80%" height="80%">
 # <figcaption>Seoul Holidays from timeanddata.com</figcaption>
 # </figure>
 # 
@@ -62,10 +62,10 @@ import numpy as np
 # In[2]:
 
 
-seoul_air = pd.read_csv('./data/seoul_air_avg.csv')
+seoul_air = pd.read_csv('/home/alexbui/workspace/HandbookForDatascience/notebooks/data/seoul_air_avg.csv')
 
 
-# In[ ]:
+# In[3]:
 
 
 seoul_air
@@ -73,14 +73,14 @@ seoul_air
 
 # ### 3.2 Check missing values
 
-# In[ ]:
+# In[4]:
 
 
 for c in seoul_air.columns:
     print(c, seoul_air[c].isnull().sum())
 
 
-# In[ ]:
+# In[5]:
 
 
 import seaborn as sns
@@ -89,7 +89,7 @@ import matplotlib.pyplot as plt
 
 # ### 3.3 Check outlier values
 
-# In[ ]:
+# In[6]:
 
 
 def check_outliners(seoul_air, c):
@@ -110,7 +110,7 @@ def check_outliners(seoul_air, c):
         col[col > ceiling] = mean_v    
 
 
-# In[ ]:
+# In[7]:
 
 
 for c in seoul_air.columns[1:7]:
@@ -121,7 +121,7 @@ for c in seoul_air.columns[1:7]:
 
 # ***Plot correlation to first understand feature interactions***
 
-# In[ ]:
+# In[8]:
 
 
 corr = seoul_air.iloc[:,1:7].corr()
@@ -132,7 +132,7 @@ plt.show()
 
 # ***Align 1h to check correlation with previous hour***
 
-# In[ ]:
+# In[9]:
 
 
 align0 = seoul_air.iloc[:-1,1:7]
@@ -141,7 +141,7 @@ align1 = seoul_air.iloc[1:,1:7]
 align = pd.concat([align1, align0], axis=1)
 
 
-# In[ ]:
+# In[10]:
 
 
 align_corr = align.corr()
@@ -152,7 +152,7 @@ plt.show()
 
 # ***Align 4h to check correlation with 4 hours ago***
 
-# In[ ]:
+# In[11]:
 
 
 align04 = seoul_air.iloc[:-4,1:7]
@@ -161,7 +161,7 @@ align14 = seoul_air.iloc[4:,1:7]
 align4 = pd.concat([align14, align04], axis=1)
 
 
-# In[ ]:
+# In[12]:
 
 
 align_corr4 = align4.corr()

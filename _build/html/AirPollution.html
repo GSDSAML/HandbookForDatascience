@@ -457,14 +457,14 @@ const thebe_selector_output = ".output, .cell_output"
 <div class="section" id="additional-data-sources">
 <h2>2. Additional Data Sources<a class="headerlink" href="#additional-data-sources" title="Permalink to this headline">¶</a></h2>
 <figure>
-<img src="./figs/ml_system.png" alt="ml_system" width="80%" height="80%">
+<img src="./_images/ml_system.png" alt="ml_system" width="80%" height="80%">
 <figcaption>Image Source From https://proceedings.neurips.cc/paper/2015/file/86df7dcfd896fcaf2674f757a2463eba-Paper.pdf</figcaption>
 </figure>
 <p>As the figure shows, we spend most of the time on data collection, cleansing, and pre-processing. Only a small amount of time is for machine learning model development. To increase the accuracy of models, we must try to find additional data to verify our hypotheses.</p>
 <div class="section" id="weather-data">
 <h3>2.1 Weather Data<a class="headerlink" href="#weather-data" title="Permalink to this headline">¶</a></h3>
 <figure>
-<img width="500px" src="./figs/seoul_weather.png" alt="ml_system" width="80%" height="80%">
+<img width="500px" src="./_images/seoul_weather.png" alt="ml_system" width="80%" height="80%">
 <figcaption>Seoul Weather from worldweatheronline.com</figcaption>
 </figure>
 <p>Many researches have pointed out that air quality level relates to weather conditions. For instance, AQ levels get better after a heavy rain, or it usually gets worse during the winter season. For more information, please check out reference papers.</p>
@@ -472,7 +472,7 @@ const thebe_selector_output = ".output, .cell_output"
 <div class="section" id="holiday-information">
 <h3>2.2 Holiday Information<a class="headerlink" href="#holiday-information" title="Permalink to this headline">¶</a></h3>
 <figure>
-<img width="500px" src="./figs/holiday.png" alt="ml_system" width="80%" height="80%">
+<img width="500px" src="./_images/holiday.png" alt="ml_system" width="80%" height="80%">
 <figcaption>Seoul Holidays from timeanddata.com</figcaption>
 </figure>
 <p>Similar to weather data, we can collect holiday information from websites like <a class="reference external" href="http://timeanddata.com">timeanddata.com</a>.</p>
@@ -493,73 +493,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p>As the original Seoul AQ dataset contains 25 information of 25 districts, it’s too large for this example. Therefore, we only work with the overall AQ dataset only. In short, we extract city-level air quality data from the original dataset.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seoul_air</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./data/seoul_air_avg.csv&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="mi">27673065</span><span class="n">aff4</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">seoul_air</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./data/seoul_air_avg.csv&#39;</span><span class="p">)</span>
-
-<span class="nn">~/anaconda3/lib/python3.8/site-packages/pandas/util/_decorators.py</span> in <span class="ni">wrapper</span><span class="nt">(*args, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">309</span>                     <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">310</span>                 <span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">311</span>             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">312</span> 
-<span class="g g-Whitespace">    </span><span class="mi">313</span>         <span class="k">return</span> <span class="n">wrapper</span>
-
-<span class="nn">~/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/readers.py</span> in <span class="ni">read_csv</span><span class="nt">(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, squeeze, prefix, mangle_dupe_cols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, error_bad_lines, warn_bad_lines, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options)</span>
-<span class="g g-Whitespace">    </span><span class="mi">584</span>     <span class="n">kwds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwds_defaults</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">585</span> 
-<span class="ne">--&gt; </span><span class="mi">586</span>     <span class="k">return</span> <span class="n">_read</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="n">kwds</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">587</span> 
-<span class="g g-Whitespace">    </span><span class="mi">588</span> 
-
-<span class="nn">~/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/readers.py</span> in <span class="ni">_read</span><span class="nt">(filepath_or_buffer, kwds)</span>
-<span class="g g-Whitespace">    </span><span class="mi">480</span> 
-<span class="g g-Whitespace">    </span><span class="mi">481</span>     <span class="c1"># Create the parser.</span>
-<span class="ne">--&gt; </span><span class="mi">482</span>     <span class="n">parser</span> <span class="o">=</span> <span class="n">TextFileReader</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">483</span> 
-<span class="g g-Whitespace">    </span><span class="mi">484</span>     <span class="k">if</span> <span class="n">chunksize</span> <span class="ow">or</span> <span class="n">iterator</span><span class="p">:</span>
-
-<span class="nn">~/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/readers.py</span> in <span class="ni">__init__</span><span class="nt">(self, f, engine, **kwds)</span>
-<span class="g g-Whitespace">    </span><span class="mi">809</span>             <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;has_index_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s2">&quot;has_index_names&quot;</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">810</span> 
-<span class="ne">--&gt; </span><span class="mi">811</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">812</span> 
-<span class="g g-Whitespace">    </span><span class="mi">813</span>     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-<span class="nn">~/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/readers.py</span> in <span class="ni">_make_engine</span><span class="nt">(self, engine)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1038</span>             <span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1039</span>         <span class="c1"># error: Too many arguments for &quot;ParserBase&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">1040</span>         <span class="k">return</span> <span class="n">mapping</span><span class="p">[</span><span class="n">engine</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>  <span class="c1"># type: ignore[call-arg]</span>
-<span class="g g-Whitespace">   </span><span class="mi">1041</span> 
-<span class="g g-Whitespace">   </span><span class="mi">1042</span>     <span class="k">def</span> <span class="nf">_failover_to_python</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-<span class="nn">~/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/c_parser_wrapper.py</span> in <span class="ni">__init__</span><span class="nt">(self, src, **kwds)</span>
-<span class="g g-Whitespace">     </span><span class="mi">49</span> 
-<span class="g g-Whitespace">     </span><span class="mi">50</span>         <span class="c1"># open handles</span>
-<span class="ne">---&gt; </span><span class="mi">51</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_open_handles</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">kwds</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">52</span>         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-<span class="g g-Whitespace">     </span><span class="mi">53</span> 
-
-<span class="nn">~/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/base_parser.py</span> in <span class="ni">_open_handles</span><span class="nt">(self, src, kwds)</span>
-<span class="g g-Whitespace">    </span><span class="mi">220</span>         <span class="n">Let</span> <span class="n">the</span> <span class="n">readers</span> <span class="nb">open</span> <span class="n">IOHandles</span> <span class="n">after</span> <span class="n">they</span> <span class="n">are</span> <span class="n">done</span> <span class="k">with</span> <span class="n">their</span> <span class="n">potential</span> <span class="n">raises</span><span class="o">.</span>
-<span class="g g-Whitespace">    </span><span class="mi">221</span>         <span class="s2">&quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">222</span><span class="s2">         self.handles = get_handle(</span>
-<span class="g g-Whitespace">    </span><span class="mi">223</span><span class="s2">             src,</span>
-<span class="g g-Whitespace">    </span><span class="mi">224</span><span class="s2">             &quot;r&quot;,</span>
-
-<span class="nn">~/anaconda3/lib/python3.8/site-packages/pandas/io/common.py</span> in <span class="ni">get_handle</span><span class="nt">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
-<span class="g g-Whitespace">    </span><span class="mi">700</span><span class="s2">         if ioargs.encoding and &quot;b&quot; not in ioargs.mode:</span>
-<span class="g g-Whitespace">    </span><span class="mi">701</span><span class="s2">             # Encoding</span>
-<span class="ne">--&gt; </span><span class="mi">702</span><span class="s2">             handle = open(</span>
-<span class="g g-Whitespace">    </span><span class="mi">703</span><span class="s2">                 handle,</span>
-<span class="g g-Whitespace">    </span><span class="mi">704</span><span class="s2">                 ioargs.mode,</span>
-
-<span class="ne">FileNotFoundError</span>: [Errno 2] No such file or directory: &#39;./data/seoul_air_avg.csv&#39;
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seoul_air</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/home/alexbui/workspace/HandbookForDatascience/notebooks/data/seoul_air_avg.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -570,6 +504,173 @@ const thebe_selector_output = ".output, .cell_output"
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Datetime</th>
+      <th>PM10_CONC</th>
+      <th>PM2_5_CONC</th>
+      <th>O3</th>
+      <th>NO2</th>
+      <th>CO</th>
+      <th>SO2</th>
+      <th>PM10_AQI</th>
+      <th>PM2_5_AQI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2008-01-01 01:00:00</td>
+      <td>59.0</td>
+      <td>14.0</td>
+      <td>0.017</td>
+      <td>0.017</td>
+      <td>0.4</td>
+      <td>0.007</td>
+      <td>53.0</td>
+      <td>55.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2008-01-01 02:00:00</td>
+      <td>52.0</td>
+      <td>14.0</td>
+      <td>0.018</td>
+      <td>0.016</td>
+      <td>0.4</td>
+      <td>0.007</td>
+      <td>48.0</td>
+      <td>55.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2008-01-01 03:00:00</td>
+      <td>49.0</td>
+      <td>14.0</td>
+      <td>0.019</td>
+      <td>0.015</td>
+      <td>0.4</td>
+      <td>0.007</td>
+      <td>45.0</td>
+      <td>55.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2008-01-01 04:00:00</td>
+      <td>45.0</td>
+      <td>15.0</td>
+      <td>0.020</td>
+      <td>0.014</td>
+      <td>0.4</td>
+      <td>0.007</td>
+      <td>42.0</td>
+      <td>57.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2008-01-01 05:00:00</td>
+      <td>41.0</td>
+      <td>15.0</td>
+      <td>0.020</td>
+      <td>0.013</td>
+      <td>0.4</td>
+      <td>0.007</td>
+      <td>38.0</td>
+      <td>57.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>91656</th>
+      <td>2018-06-18 07:00:00</td>
+      <td>46.0</td>
+      <td>33.0</td>
+      <td>0.010</td>
+      <td>0.033</td>
+      <td>0.5</td>
+      <td>0.003</td>
+      <td>43.0</td>
+      <td>95.0</td>
+    </tr>
+    <tr>
+      <th>91657</th>
+      <td>2018-06-18 08:00:00</td>
+      <td>49.0</td>
+      <td>33.0</td>
+      <td>0.013</td>
+      <td>0.037</td>
+      <td>0.6</td>
+      <td>0.003</td>
+      <td>45.0</td>
+      <td>95.0</td>
+    </tr>
+    <tr>
+      <th>91658</th>
+      <td>2018-06-18 09:00:00</td>
+      <td>54.0</td>
+      <td>37.0</td>
+      <td>0.022</td>
+      <td>0.038</td>
+      <td>0.6</td>
+      <td>0.004</td>
+      <td>50.0</td>
+      <td>105.0</td>
+    </tr>
+    <tr>
+      <th>91659</th>
+      <td>2018-06-18 10:00:00</td>
+      <td>62.0</td>
+      <td>42.0</td>
+      <td>0.036</td>
+      <td>0.038</td>
+      <td>0.6</td>
+      <td>0.004</td>
+      <td>54.0</td>
+      <td>117.0</td>
+    </tr>
+    <tr>
+      <th>91660</th>
+      <td>2018-06-18 11:00:00</td>
+      <td>61.0</td>
+      <td>43.0</td>
+      <td>0.049</td>
+      <td>0.035</td>
+      <td>0.5</td>
+      <td>0.005</td>
+      <td>54.0</td>
+      <td>119.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>91661 rows × 9 columns</p>
+</div></div></div>
 </div>
 </div>
 <div class="section" id="check-missing-values">
@@ -578,6 +679,19 @@ const thebe_selector_output = ".output, .cell_output"
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seoul_air</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">seoul_air</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Datetime 0
+PM10_CONC 0
+PM2_5_CONC 0
+O3 0
+NO2 0
+CO 0
+SO2 0
+PM10_AQI 0
+PM2_5_AQI 0
 </pre></div>
 </div>
 </div>
@@ -622,6 +736,16 @@ const thebe_selector_output = ".output, .cell_output"
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>num of outlier PM10_CONC 3857
+num of outlier PM2_5_CONC 3611
+num of outlier O3 2320
+num of outlier NO2 766
+num of outlier CO 9354
+num of outlier SO2 3913
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="plotting">
@@ -635,6 +759,9 @@ const thebe_selector_output = ".output, .cell_output"
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_17_0.png" src="_images/AirPollution_17_0.png" />
 </div>
 </div>
 <p><em><strong>Align 1h to check correlation with previous hour</strong></em></p>
@@ -657,6 +784,9 @@ const thebe_selector_output = ".output, .cell_output"
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_20_0.png" src="_images/AirPollution_20_0.png" />
+</div>
 </div>
 <p><em><strong>Align 4h to check correlation with 4 hours ago</strong></em></p>
 <div class="cell docutils container">
@@ -677,6 +807,9 @@ const thebe_selector_output = ".output, .cell_output"
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_23_0.png" src="_images/AirPollution_23_0.png" />
 </div>
 </div>
 </div>
