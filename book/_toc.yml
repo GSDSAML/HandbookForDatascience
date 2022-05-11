@@ -11,6 +11,7 @@ parts:
   chapters:
   - file: BostonHousing
   - file: LendingClub
+  - file: AirPollution
 - caption: Infrastructure
   chapters:
   - file: Infrastructure
