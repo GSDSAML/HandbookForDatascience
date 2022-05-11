@@ -9,6 +9,7 @@ parts:
   - file: LifeCycle
 - caption: Pratical Hands-on skills
   chapters:
+  - file: BostonHousing
   - file: LendingClub
 - caption: Infrastructure
   chapters:
