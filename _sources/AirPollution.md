@@ -38,7 +38,7 @@ This dataset is collected from @seoul_air, including Seoul air quality data from
 
 ## 2. Additional Data Sources
 <figure>
-<img src="./figs/ml_system.png" alt="ml_system" width="80%" height="80%">
+<img src="./_images/ml_system.png" alt="ml_system" width="80%" height="80%">
 <figcaption>Image Source From https://proceedings.neurips.cc/paper/2015/file/86df7dcfd896fcaf2674f757a2463eba-Paper.pdf</figcaption>
 </figure>
 
@@ -47,7 +47,7 @@ As the figure shows, we spend most of the time on data collection, cleansing, an
 ### 2.1 Weather Data
 
 <figure>
-<img width="500px" src="./figs/seoul_weather.png" alt="ml_system" width="80%" height="80%">
+<img width="500px" src="./_images/seoul_weather.png" alt="ml_system" width="80%" height="80%">
 <figcaption>Seoul Weather from worldweatheronline.com</figcaption>
 </figure>
 
@@ -56,7 +56,7 @@ Many researches have pointed out that air quality level relates to weather condi
 ### 2.2 Holiday Information
 
 <figure>
-<img width="500px" src="./figs/holiday.png" alt="ml_system" width="80%" height="80%">
+<img width="500px" src="./_images/holiday.png" alt="ml_system" width="80%" height="80%">
 <figcaption>Seoul Holidays from timeanddata.com</figcaption>
 </figure>
 
@@ -76,7 +76,7 @@ import numpy as np
 As the original Seoul AQ dataset contains 25 information of 25 districts, it's too large for this example. Therefore, we only work with the overall AQ dataset only. In short, we extract city-level air quality data from the original dataset.
 
 ```{code-cell} ipython3
-seoul_air = pd.read_csv('./data/seoul_air_avg.csv')
+seoul_air = pd.read_csv('/home/alexbui/workspace/HandbookForDatascience/notebooks/data/seoul_air_avg.csv')
 ```
 
 ```{code-cell} ipython3
