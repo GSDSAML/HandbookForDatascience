@@ -140,7 +140,7 @@ for c in ["temperature(C)",	"feel_like(C)",	"wind_speed(km/h)",	"wind_gust(km/h)
     check_outliners(weather, c)
 ```
 
-## 3.4 Merge Air Data & Weather Data
+### 3.4 Merge Air Data & Weather Data
 
 We have to check which datetime data is missing and interpolate it. The simplest way is to filling it with near by neighbors or average values of near by neighbors.
 
