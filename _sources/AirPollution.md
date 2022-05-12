@@ -73,17 +73,36 @@ import numpy as np
 
 ### 3.1 Data loading
 
-As the original Seoul AQ dataset contains 25 information of 25 districts, it's too large for this example. Therefore, we only work with the overall AQ dataset only. In short, we extract city-level air quality data from the original dataset.
+As the original Seoul AQ dataset contains 25 information of 25 districts, it's too large for this example. Therefore, we only work with the overall AQ dataset only. In short, we extract city-level air quality data from 2014 -> 2018 from the original dataset.
 
 ```{code-cell} ipython3
-seoul_air = pd.read_csv('/home/alexbui/workspace/HandbookForDatascience/notebooks/data/seoul_air_avg.csv')
+path = "/home/alexbui/workspace/HandbookForDatascience/notebooks/"
+```
+
+```{code-cell} ipython3
+seoul_air = pd.read_csv(path + 'data/seoul_air_avg.csv')
+seoul_air.drop(["PM10_AQI", "PM2_5_AQI"], axis=1, inplace=True)
+seoul_air.columns = [c.lower() for c in seoul_air.columns]
 ```
 
 ```{code-cell} ipython3
 seoul_air
 ```
 
+***Load weather data***
+
+```{code-cell} ipython3
+weather = pd.read_csv(path + "data/weather_forecasts.csv")
+weather = weather[weather['datetime'] <= "2018-06-18 11:00:00"]
+weather
+```
+
 ### 3.2 Check missing values 
+
+```{code-cell} ipython3
+import seaborn as sns
+import matplotlib.pyplot as plt
+```
 
 ```{code-cell} ipython3
 for c in seoul_air.columns:
@@ -91,8 +110,8 @@ for c in seoul_air.columns:
 ```
 
 ```{code-cell} ipython3
-import seaborn as sns
-import matplotlib.pyplot as plt
+for c in weather.columns:
+    print(c, weather[c].isnull().sum())
 ```
 
 ### 3.3 Check outlier values
@@ -117,11 +136,25 @@ def check_outliners(seoul_air, c):
 ```
 
 ```{code-cell} ipython3
-for c in seoul_air.columns[1:7]:
-    check_outliners(seoul_air, c)
+for c in ["temperature(C)",	"feel_like(C)",	"wind_speed(km/h)",	"wind_gust(km/h)", "cloud(%)", "humidity(%)", "rain(mm)", "pressure"]:
+    check_outliners(weather, c)
 ```
 
-### 3.4 Plotting
+## 3.4 Merge Air Data & Weather Data
+
+We have to check which datetime data is missing and interpolate it. The simplest way is to filling it with near by neighbors or average values of near by neighbors.
+
+```{code-cell} ipython3
+air_weather = pd.merge(weather, seoul_air, on='datetime', how='outer')
+air_weather[air_weather['pm10_conc'].isnull()]
+```
+
+```{code-cell} ipython3
+air_weather2 = air_weather.interpolate(method='linear')
+air_weather2[air_weather['pm10_conc'].isnull()]
+```
+
+### 3.5 Plotting
 
 +++
 
@@ -137,38 +170,161 @@ plt.show()
 ***Align 1h to check correlation with previous hour***
 
 ```{code-cell} ipython3
-align0 = seoul_air.iloc[:-1,1:7]
-align0.columns = [c + "_m1" for c in align0.columns]
-align1 = seoul_air.iloc[1:,1:7]
-align = pd.concat([align1, align0], axis=1)
+def concat_dataframe(df, timeshift=1):
+    df1 = df.iloc[:-timeshift,:]
+    df1.columns = [c + "_m%i" % timeshift for c in df1.columns]
+    df2 = df.iloc[timeshift:,:].reset_index().drop(["index"],axis=1)
+    return pd.concat([df1, df2], axis=1)
 ```
 
 ```{code-cell} ipython3
-align_corr = align.corr()
-fig, ax = plt.subplots(figsize=(10,10))
-sns.heatmap(align_corr)
-plt.show()
+def plot_corr(df):
+    align_corr = df.corr()
+    plt.subplots(figsize=(10,10))
+    sns.heatmap(align_corr)
+    plt.show()
+    return align_corr
+```
+
+```{code-cell} ipython3
+align1 = concat_dataframe(seoul_air.iloc[:,1:7], 1)
+```
+
+```{code-cell} ipython3
+plot_corr(align1)
 ```
 
 ***Align 4h to check correlation with 4 hours ago***
 
 ```{code-cell} ipython3
-align04 = seoul_air.iloc[:-4,1:7]
-align04.columns = [c + "_m4" for c in align04.columns]
-align14 = seoul_air.iloc[4:,1:7]
-align4 = pd.concat([align14, align04], axis=1)
+align4 = concat_dataframe(seoul_air.iloc[:,1:7], 4)
+plot_corr(align4)
+```
+
+***Plot weather & air quality together***
+
+```{code-cell} ipython3
+plot_corr(air_weather2)
 ```
 
 ```{code-cell} ipython3
-align_corr4 = align4.corr()
-fig, ax = plt.subplots(figsize=(10,10))
-sns.heatmap(align_corr4)
-plt.show()
+air_weather4 = concat_dataframe(air_weather2, 4)
+```
+
+```{code-cell} ipython3
+plot_corr(air_weather4)
+```
+
+### 3.6 Training, Testing Split
+
+```{code-cell} ipython3
+target = ['pm2_5_conc', 'pm10_conc']
+```
+
+```{code-cell} ipython3
+dataset1 = concat_dataframe(air_weather2, 1)
+training1 = dataset1[dataset1['datetime'] <= "2017-12-31 23:00:00"]
+training1.drop(drp_columns, axis=1, inplace=True)
+testing1 = dataset1[dataset1['datetime'] > "2017-12-31 23:00:00"]
+testing1.drop(drp_columns, axis=1, inplace=True)
+X1_train, y1_train = training1.drop(target, axis=1), training1['pm2_5_conc']
+X1_test, y1_test = testing1.drop(target, axis=1), testing1['pm2_5_conc']
+```
+
+```{code-cell} ipython3
+def build_dataset(timeshift=1):
+    drp_columns = ['datetime', 'datetime_m%i'%timeshift, 'weather_m%i'%timeshift, 'wind_direction_m%i'%timeshift, 'weather', 'wind_direction']
+    dataset1 = concat_dataframe(air_weather2, timeshift)
+    training1 = dataset1[dataset1['datetime'] <= "2016-12-31 23:00:00"]
+    training1.drop(drp_columns, axis=1, inplace=True)
+    testing1 = dataset1[(dataset1['datetime'] > "2016-12-31 23:00:00") & (dataset1['datetime'] <= "2017-12-31 23:00:00")]
+    testing1.drop(drp_columns, axis=1, inplace=True)
+    X1_train, y1_train = training1.drop(target, axis=1), training1['pm2_5_conc']
+    X1_test, y1_test = testing1.drop(target, axis=1), testing1['pm2_5_conc']
+    return X1_train, y1_train, X1_test, y1_test
+```
+
+***Create training dataset to predict time ahead: 1h, 4h, 8h, 12h, 16h, 24h***
+
+```{code-cell} ipython3
+X1_train, y1_train, X1_test, y1_test = build_dataset(1)
+X4_train, y4_train, X4_test, y4_test = build_dataset(4)
+X8_train, y8_train, X8_test, y8_test = build_dataset(8)
+X12_train, y12_train, X12_test, y12_test = build_dataset(12)
+X16_train, y16_train, X16_test, y16_test = build_dataset(16)
+X20_train, y20_train, X20_test, y20_test = build_dataset(20)
+X24_train, y24_train, X24_test, y24_test = build_dataset(24)
 ```
 
 ## 4. Model Construction
 
-+++
+```{code-cell} ipython3
+import xgboost as xgb
+from sklearn.metrics import mean_absolute_error
+```
+
+***Create simple XGBoost model for corresponding dataset***
+
+```{code-cell} ipython3
+def plot_pred(pred, label):
+    p1_df = pd.DataFrame({'pred': pred, 'label': label, 'time': list(range(len(pred)))})
+    fg, ax = plt.subplots(figsize=(10,10))
+    sns.lineplot(data=p1_df, x='time', y='pred', label="pred")
+    sns.lineplot(data=p1_df, x='time', y='label', label="label")
+    plt.xlabel("Time")
+    plt.ylabel("PM2_5 Concentration")
+    plt.show()
+```
+
+```{code-cell} ipython3
+model1 = xgb.XGBRegressor().fit(X1_train, y1_train)
+pred1 = model1.predict(X1_test)
+mean_absolute_error(pred1, y1_test)
+```
+
+```{code-cell} ipython3
+plot_pred(pred1, y1_test)
+```
+
+```{code-cell} ipython3
+model4 = xgb.XGBRegressor().fit(X4_train, y4_train)
+pred4 = model4.predict(X4_test)
+mean_absolute_error(pred4, y4_test)
+```
+
+```{code-cell} ipython3
+plot_pred(pred4, y4_test)
+```
+
+```{code-cell} ipython3
+model8 = xgb.XGBRegressor().fit(X8_train, y8_train)
+pred8 = model8.predict(X8_test)
+mean_absolute_error(pred8, y8_test)
+```
+
+```{code-cell} ipython3
+plot_pred(pred8, y8_test)
+```
+
+```{code-cell} ipython3
+model12 = xgb.XGBRegressor().fit(X12_train, y12_train)
+pred12 = model8.predict(X12_test)
+mean_absolute_error(pred12, y12_test)
+```
+
+```{code-cell} ipython3
+plot_pred(pred12, y12_test)
+```
+
+```{code-cell} ipython3
+model24 = xgb.XGBRegressor().fit(X24_train, y24_train)
+pred24 = model24.predict(X24_test)
+mean_absolute_error(pred24, y24_test)
+```
+
+```{code-cell} ipython3
+plot_pred(pred24, y24_test)
+```
 
 ## 5. Explain the Results
 

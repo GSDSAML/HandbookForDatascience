@@ -304,9 +304,21 @@ const thebe_selector_output = ".output, .cell_output"
      3.3 Check outlier values
     </a>
    </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#merge-air-data-weather-data">
+   3.4 Merge Air Data &amp; Weather Data
+  </a>
+  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#plotting">
-     3.4 Plotting
+     3.5 Plotting
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#training-testing-split">
+     3.6 Training, Testing Split
     </a>
    </li>
   </ul>
@@ -383,9 +395,21 @@ const thebe_selector_output = ".output, .cell_output"
      3.3 Check outlier values
     </a>
    </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#merge-air-data-weather-data">
+   3.4 Merge Air Data &amp; Weather Data
+  </a>
+  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#plotting">
-     3.4 Plotting
+     3.5 Plotting
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#training-testing-split">
+     3.6 Training, Testing Split
     </a>
    </li>
   </ul>
@@ -490,10 +514,19 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 <div class="section" id="data-loading">
 <h3>3.1 Data loading<a class="headerlink" href="#data-loading" title="Permalink to this headline">¶</a></h3>
-<p>As the original Seoul AQ dataset contains 25 information of 25 districts, it’s too large for this example. Therefore, we only work with the overall AQ dataset only. In short, we extract city-level air quality data from the original dataset.</p>
+<p>As the original Seoul AQ dataset contains 25 information of 25 districts, it’s too large for this example. Therefore, we only work with the overall AQ dataset only. In short, we extract city-level air quality data from 2014 -&gt; 2018 from the original dataset.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seoul_air</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/home/alexbui/workspace/HandbookForDatascience/notebooks/data/seoul_air_avg.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;/home/alexbui/workspace/HandbookForDatascience/notebooks/&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seoul_air</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;data/seoul_air_avg.csv&#39;</span><span class="p">)</span>
+<span class="n">seoul_air</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;PM10_AQI&quot;</span><span class="p">,</span> <span class="s2">&quot;PM2_5_AQI&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">seoul_air</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seoul_air</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -523,77 +556,242 @@ const thebe_selector_output = ".output, .cell_output"
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Datetime</th>
-      <th>PM10_CONC</th>
-      <th>PM2_5_CONC</th>
-      <th>O3</th>
-      <th>NO2</th>
-      <th>CO</th>
-      <th>SO2</th>
-      <th>PM10_AQI</th>
-      <th>PM2_5_AQI</th>
+      <th>datetime</th>
+      <th>pm10_conc</th>
+      <th>pm2_5_conc</th>
+      <th>o3</th>
+      <th>no2</th>
+      <th>co</th>
+      <th>so2</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>2008-01-01 01:00:00</td>
-      <td>59.0</td>
-      <td>14.0</td>
-      <td>0.017</td>
-      <td>0.017</td>
+      <td>2015-01-01 00:00:00</td>
+      <td>47.0</td>
+      <td>11.0</td>
+      <td>0.020</td>
+      <td>0.012</td>
       <td>0.4</td>
-      <td>0.007</td>
-      <td>53.0</td>
-      <td>55.0</td>
+      <td>0.005</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>2008-01-01 02:00:00</td>
-      <td>52.0</td>
-      <td>14.0</td>
-      <td>0.018</td>
-      <td>0.016</td>
+      <td>2015-01-01 01:00:00</td>
+      <td>46.0</td>
+      <td>10.0</td>
+      <td>0.021</td>
+      <td>0.010</td>
       <td>0.4</td>
-      <td>0.007</td>
-      <td>48.0</td>
-      <td>55.0</td>
+      <td>0.005</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>2008-01-01 03:00:00</td>
-      <td>49.0</td>
-      <td>14.0</td>
-      <td>0.019</td>
-      <td>0.015</td>
+      <td>2015-01-01 02:00:00</td>
+      <td>59.0</td>
+      <td>10.0</td>
+      <td>0.020</td>
+      <td>0.010</td>
       <td>0.4</td>
-      <td>0.007</td>
-      <td>45.0</td>
-      <td>55.0</td>
+      <td>0.006</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>2008-01-01 04:00:00</td>
-      <td>45.0</td>
-      <td>15.0</td>
+      <td>2015-01-01 03:00:00</td>
+      <td>78.0</td>
+      <td>12.0</td>
       <td>0.020</td>
-      <td>0.014</td>
+      <td>0.009</td>
       <td>0.4</td>
-      <td>0.007</td>
-      <td>42.0</td>
-      <td>57.0</td>
+      <td>0.005</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>2008-01-01 05:00:00</td>
-      <td>41.0</td>
-      <td>15.0</td>
+      <td>2015-01-01 04:00:00</td>
+      <td>94.0</td>
+      <td>13.0</td>
       <td>0.020</td>
-      <td>0.013</td>
-      <td>0.4</td>
       <td>0.007</td>
-      <td>38.0</td>
-      <td>57.0</td>
+      <td>0.3</td>
+      <td>0.005</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>30338</th>
+      <td>2018-06-18 07:00:00</td>
+      <td>46.0</td>
+      <td>33.0</td>
+      <td>0.010</td>
+      <td>0.033</td>
+      <td>0.5</td>
+      <td>0.003</td>
+    </tr>
+    <tr>
+      <th>30339</th>
+      <td>2018-06-18 08:00:00</td>
+      <td>49.0</td>
+      <td>33.0</td>
+      <td>0.013</td>
+      <td>0.037</td>
+      <td>0.6</td>
+      <td>0.003</td>
+    </tr>
+    <tr>
+      <th>30340</th>
+      <td>2018-06-18 09:00:00</td>
+      <td>54.0</td>
+      <td>37.0</td>
+      <td>0.022</td>
+      <td>0.038</td>
+      <td>0.6</td>
+      <td>0.004</td>
+    </tr>
+    <tr>
+      <th>30341</th>
+      <td>2018-06-18 10:00:00</td>
+      <td>62.0</td>
+      <td>42.0</td>
+      <td>0.036</td>
+      <td>0.038</td>
+      <td>0.6</td>
+      <td>0.004</td>
+    </tr>
+    <tr>
+      <th>30342</th>
+      <td>2018-06-18 11:00:00</td>
+      <td>61.0</td>
+      <td>43.0</td>
+      <td>0.049</td>
+      <td>0.035</td>
+      <td>0.5</td>
+      <td>0.005</td>
+    </tr>
+  </tbody>
+</table>
+<p>30343 rows × 7 columns</p>
+</div></div></div>
+</div>
+<p><em><strong>Load weather data</strong></em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">weather</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;data/weather_forecasts.csv&quot;</span><span class="p">)</span>
+<span class="n">weather</span> <span class="o">=</span> <span class="n">weather</span><span class="p">[</span><span class="n">weather</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="s2">&quot;2018-06-18 11:00:00&quot;</span><span class="p">]</span>
+<span class="n">weather</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>weather</th>
+      <th>temperature(C)</th>
+      <th>feel_like(C)</th>
+      <th>wind_speed(km/h)</th>
+      <th>wind_direction</th>
+      <th>wind_gust(km/h)</th>
+      <th>cloud(%)</th>
+      <th>humidity(%)</th>
+      <th>rain(mm)</th>
+      <th>pressure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2015-01-01 00:00:00</td>
+      <td>Patchy snow possible</td>
+      <td>-7</td>
+      <td>-16</td>
+      <td>35</td>
+      <td>NW</td>
+      <td>50</td>
+      <td>12</td>
+      <td>44</td>
+      <td>0.0</td>
+      <td>1021</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2015-01-01 01:00:00</td>
+      <td>Patchy snow possible</td>
+      <td>-7</td>
+      <td>-16</td>
+      <td>35</td>
+      <td>NW</td>
+      <td>50</td>
+      <td>12</td>
+      <td>44</td>
+      <td>0.0</td>
+      <td>1021</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2015-01-01 02:00:00</td>
+      <td>Patchy snow possible</td>
+      <td>-7</td>
+      <td>-16</td>
+      <td>35</td>
+      <td>NW</td>
+      <td>50</td>
+      <td>12</td>
+      <td>44</td>
+      <td>0.0</td>
+      <td>1021</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2015-01-01 03:00:00</td>
+      <td>Clear</td>
+      <td>-8</td>
+      <td>-18</td>
+      <td>36</td>
+      <td>NW</td>
+      <td>52</td>
+      <td>8</td>
+      <td>42</td>
+      <td>0.0</td>
+      <td>1022</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2015-01-01 04:00:00</td>
+      <td>Clear</td>
+      <td>-8</td>
+      <td>-18</td>
+      <td>36</td>
+      <td>NW</td>
+      <td>52</td>
+      <td>8</td>
+      <td>42</td>
+      <td>0.0</td>
+      <td>1022</td>
     </tr>
     <tr>
       <th>...</th>
@@ -606,75 +804,95 @@ const thebe_selector_output = ".output, .cell_output"
       <td>...</td>
       <td>...</td>
       <td>...</td>
+      <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
-      <th>91656</th>
+      <th>30343</th>
       <td>2018-06-18 07:00:00</td>
-      <td>46.0</td>
-      <td>33.0</td>
-      <td>0.010</td>
-      <td>0.033</td>
-      <td>0.5</td>
-      <td>0.003</td>
-      <td>43.0</td>
-      <td>95.0</td>
+      <td>Partly cloudy</td>
+      <td>22</td>
+      <td>23</td>
+      <td>1</td>
+      <td>SE</td>
+      <td>2</td>
+      <td>49</td>
+      <td>60</td>
+      <td>0.0</td>
+      <td>1008</td>
     </tr>
     <tr>
-      <th>91657</th>
+      <th>30344</th>
       <td>2018-06-18 08:00:00</td>
-      <td>49.0</td>
-      <td>33.0</td>
-      <td>0.013</td>
-      <td>0.037</td>
-      <td>0.6</td>
-      <td>0.003</td>
-      <td>45.0</td>
-      <td>95.0</td>
+      <td>Partly cloudy</td>
+      <td>22</td>
+      <td>23</td>
+      <td>1</td>
+      <td>SE</td>
+      <td>2</td>
+      <td>49</td>
+      <td>60</td>
+      <td>0.0</td>
+      <td>1008</td>
     </tr>
     <tr>
-      <th>91658</th>
+      <th>30345</th>
       <td>2018-06-18 09:00:00</td>
-      <td>54.0</td>
-      <td>37.0</td>
-      <td>0.022</td>
-      <td>0.038</td>
-      <td>0.6</td>
-      <td>0.004</td>
-      <td>50.0</td>
-      <td>105.0</td>
+      <td>Partly cloudy</td>
+      <td>26</td>
+      <td>27</td>
+      <td>3</td>
+      <td>SSW</td>
+      <td>4</td>
+      <td>44</td>
+      <td>44</td>
+      <td>0.0</td>
+      <td>1009</td>
     </tr>
     <tr>
-      <th>91659</th>
+      <th>30346</th>
       <td>2018-06-18 10:00:00</td>
-      <td>62.0</td>
-      <td>42.0</td>
-      <td>0.036</td>
-      <td>0.038</td>
-      <td>0.6</td>
-      <td>0.004</td>
-      <td>54.0</td>
-      <td>117.0</td>
+      <td>Partly cloudy</td>
+      <td>26</td>
+      <td>27</td>
+      <td>3</td>
+      <td>SSW</td>
+      <td>4</td>
+      <td>44</td>
+      <td>44</td>
+      <td>0.0</td>
+      <td>1009</td>
     </tr>
     <tr>
-      <th>91660</th>
+      <th>30347</th>
       <td>2018-06-18 11:00:00</td>
-      <td>61.0</td>
-      <td>43.0</td>
-      <td>0.049</td>
-      <td>0.035</td>
-      <td>0.5</td>
-      <td>0.005</td>
-      <td>54.0</td>
-      <td>119.0</td>
+      <td>Partly cloudy</td>
+      <td>26</td>
+      <td>27</td>
+      <td>3</td>
+      <td>SSW</td>
+      <td>4</td>
+      <td>44</td>
+      <td>44</td>
+      <td>0.0</td>
+      <td>1009</td>
     </tr>
   </tbody>
 </table>
-<p>91661 rows × 9 columns</p>
+<p>30348 rows × 11 columns</p>
 </div></div></div>
 </div>
 </div>
 <div class="section" id="check-missing-values">
 <h3>3.2 Check missing values<a class="headerlink" href="#check-missing-values" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seoul_air</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -683,23 +901,36 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Datetime 0
-PM10_CONC 0
-PM2_5_CONC 0
-O3 0
-NO2 0
-CO 0
-SO2 0
-PM10_AQI 0
-PM2_5_AQI 0
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>datetime 0
+pm10_conc 0
+pm2_5_conc 0
+o3 0
+no2 0
+co 0
+so2 0
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">weather</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">weather</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>datetime 0
+weather 0
+temperature(C) 0
+feel_like(C) 0
+wind_speed(km/h) 0
+wind_direction 0
+wind_gust(km/h) 0
+cloud(%) 0
+humidity(%) 0
+rain(mm) 0
+pressure 0
 </pre></div>
 </div>
 </div>
@@ -731,25 +962,331 @@ PM2_5_AQI 0
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">seoul_air</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">]:</span>
-    <span class="n">check_outliners</span><span class="p">(</span><span class="n">seoul_air</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;temperature(C)&quot;</span><span class="p">,</span>	<span class="s2">&quot;feel_like(C)&quot;</span><span class="p">,</span>	<span class="s2">&quot;wind_speed(km/h)&quot;</span><span class="p">,</span>	<span class="s2">&quot;wind_gust(km/h)&quot;</span><span class="p">,</span> <span class="s2">&quot;cloud(%)&quot;</span><span class="p">,</span> <span class="s2">&quot;humidity(%)&quot;</span><span class="p">,</span> <span class="s2">&quot;rain(mm)&quot;</span><span class="p">,</span> <span class="s2">&quot;pressure&quot;</span><span class="p">]:</span>
+    <span class="n">check_outliners</span><span class="p">(</span><span class="n">weather</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>num of outlier PM10_CONC 3857
-num of outlier PM2_5_CONC 3611
-num of outlier O3 2320
-num of outlier NO2 766
-num of outlier CO 9354
-num of outlier SO2 3913
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>num of outlier temperature(C) 0
+num of outlier feel_like(C) 0
+num of outlier wind_speed(km/h) 1442
+num of outlier wind_gust(km/h) 1707
+num of outlier cloud(%) 0
+num of outlier humidity(%) 0
+num of outlier rain(mm) 2724
+num of outlier pressure 0
 </pre></div>
 </div>
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="merge-air-data-weather-data">
+<h2>3.4 Merge Air Data &amp; Weather Data<a class="headerlink" href="#merge-air-data-weather-data" title="Permalink to this headline">¶</a></h2>
+<p>We have to check which datetime data is missing and interpolate it. The simplest way is to filling it with near by neighbors or average values of near by neighbors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">air_weather</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">weather</span><span class="p">,</span> <span class="n">seoul_air</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+<span class="n">air_weather</span><span class="p">[</span><span class="n">air_weather</span><span class="p">[</span><span class="s1">&#39;pm10_conc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>weather</th>
+      <th>temperature(C)</th>
+      <th>feel_like(C)</th>
+      <th>wind_speed(km/h)</th>
+      <th>wind_direction</th>
+      <th>wind_gust(km/h)</th>
+      <th>cloud(%)</th>
+      <th>humidity(%)</th>
+      <th>rain(mm)</th>
+      <th>pressure</th>
+      <th>pm10_conc</th>
+      <th>pm2_5_conc</th>
+      <th>o3</th>
+      <th>no2</th>
+      <th>co</th>
+      <th>so2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5640</th>
+      <td>2015-08-24 00:00:00</td>
+      <td>Clear</td>
+      <td>23</td>
+      <td>26</td>
+      <td>6</td>
+      <td>NNE</td>
+      <td>11</td>
+      <td>7</td>
+      <td>79</td>
+      <td>0.0</td>
+      <td>1009</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5892</th>
+      <td>2015-09-03 12:00:00</td>
+      <td>Partly cloudy</td>
+      <td>25</td>
+      <td>27</td>
+      <td>12</td>
+      <td>WNW</td>
+      <td>13</td>
+      <td>42</td>
+      <td>63</td>
+      <td>0.0</td>
+      <td>1011</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>15660</th>
+      <td>2016-10-14 12:00:00</td>
+      <td>Sunny</td>
+      <td>20</td>
+      <td>25</td>
+      <td>2</td>
+      <td>E</td>
+      <td>2</td>
+      <td>2</td>
+      <td>51</td>
+      <td>0.0</td>
+      <td>1025</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>22890</th>
+      <td>2017-08-11 18:00:00</td>
+      <td>Partly cloudy</td>
+      <td>30</td>
+      <td>33</td>
+      <td>10</td>
+      <td>ENE</td>
+      <td>12</td>
+      <td>34</td>
+      <td>50</td>
+      <td>0.0</td>
+      <td>1008</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>23570</th>
+      <td>2017-09-09 02:00:00</td>
+      <td>Clear</td>
+      <td>24</td>
+      <td>30</td>
+      <td>6</td>
+      <td>WNW</td>
+      <td>7</td>
+      <td>0</td>
+      <td>68</td>
+      <td>0.0</td>
+      <td>1013</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">air_weather2</span> <span class="o">=</span> <span class="n">air_weather</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="n">air_weather2</span><span class="p">[</span><span class="n">air_weather</span><span class="p">[</span><span class="s1">&#39;pm10_conc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>weather</th>
+      <th>temperature(C)</th>
+      <th>feel_like(C)</th>
+      <th>wind_speed(km/h)</th>
+      <th>wind_direction</th>
+      <th>wind_gust(km/h)</th>
+      <th>cloud(%)</th>
+      <th>humidity(%)</th>
+      <th>rain(mm)</th>
+      <th>pressure</th>
+      <th>pm10_conc</th>
+      <th>pm2_5_conc</th>
+      <th>o3</th>
+      <th>no2</th>
+      <th>co</th>
+      <th>so2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5640</th>
+      <td>2015-08-24 00:00:00</td>
+      <td>Clear</td>
+      <td>23</td>
+      <td>26</td>
+      <td>6</td>
+      <td>NNE</td>
+      <td>11</td>
+      <td>7</td>
+      <td>79</td>
+      <td>0.0</td>
+      <td>1009</td>
+      <td>40.0</td>
+      <td>25.0</td>
+      <td>0.0205</td>
+      <td>0.0280</td>
+      <td>0.50</td>
+      <td>0.004</td>
+    </tr>
+    <tr>
+      <th>5892</th>
+      <td>2015-09-03 12:00:00</td>
+      <td>Partly cloudy</td>
+      <td>25</td>
+      <td>27</td>
+      <td>12</td>
+      <td>WNW</td>
+      <td>13</td>
+      <td>42</td>
+      <td>63</td>
+      <td>0.0</td>
+      <td>1011</td>
+      <td>20.0</td>
+      <td>11.5</td>
+      <td>0.0475</td>
+      <td>0.0195</td>
+      <td>0.35</td>
+      <td>0.004</td>
+    </tr>
+    <tr>
+      <th>15660</th>
+      <td>2016-10-14 12:00:00</td>
+      <td>Sunny</td>
+      <td>20</td>
+      <td>25</td>
+      <td>2</td>
+      <td>E</td>
+      <td>2</td>
+      <td>2</td>
+      <td>51</td>
+      <td>0.0</td>
+      <td>1025</td>
+      <td>64.0</td>
+      <td>29.5</td>
+      <td>0.0200</td>
+      <td>0.0415</td>
+      <td>0.60</td>
+      <td>0.005</td>
+    </tr>
+    <tr>
+      <th>22890</th>
+      <td>2017-08-11 18:00:00</td>
+      <td>Partly cloudy</td>
+      <td>30</td>
+      <td>33</td>
+      <td>10</td>
+      <td>ENE</td>
+      <td>12</td>
+      <td>34</td>
+      <td>50</td>
+      <td>0.0</td>
+      <td>1008</td>
+      <td>16.5</td>
+      <td>8.5</td>
+      <td>0.0385</td>
+      <td>0.0275</td>
+      <td>0.35</td>
+      <td>0.004</td>
+    </tr>
+    <tr>
+      <th>23570</th>
+      <td>2017-09-09 02:00:00</td>
+      <td>Clear</td>
+      <td>24</td>
+      <td>30</td>
+      <td>6</td>
+      <td>WNW</td>
+      <td>7</td>
+      <td>0</td>
+      <td>68</td>
+      <td>0.0</td>
+      <td>1013</td>
+      <td>63.5</td>
+      <td>45.0</td>
+      <td>0.0200</td>
+      <td>0.0300</td>
+      <td>0.70</td>
+      <td>0.005</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
 <div class="section" id="plotting">
-<h3>3.4 Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h3>
+<h3>3.5 Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h3>
 <p><em><strong>Plot correlation to first understand feature interactions</strong></em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -761,61 +1298,1686 @@ num of outlier SO2 3913
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/AirPollution_17_0.png" src="_images/AirPollution_17_0.png" />
+<img alt="_images/AirPollution_24_0.png" src="_images/AirPollution_24_0.png" />
 </div>
 </div>
 <p><em><strong>Align 1h to check correlation with previous hour</strong></em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">align0</span> <span class="o">=</span> <span class="n">seoul_air</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
-<span class="n">align0</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">+</span> <span class="s2">&quot;_m1&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">align0</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
-<span class="n">align1</span> <span class="o">=</span> <span class="n">seoul_air</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
-<span class="n">align</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">align1</span><span class="p">,</span> <span class="n">align0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">concat_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">timeshift</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="n">timeshift</span><span class="p">,:]</span>
+    <span class="n">df1</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">+</span> <span class="s2">&quot;_m</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">timeshift</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df1</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">timeshift</span><span class="p">:,:]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;index&quot;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">align_corr</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">align_corr</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_corr</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="n">align_corr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">align_corr</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">align_corr</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">align1</span> <span class="o">=</span> <span class="n">concat_dataframe</span><span class="p">(</span><span class="n">seoul_air</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_corr</span><span class="p">(</span><span class="n">align1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/AirPollution_20_0.png" src="_images/AirPollution_20_0.png" />
-</div>
+<img alt="_images/AirPollution_29_0.png" src="_images/AirPollution_29_0.png" />
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pm10_conc_m1</th>
+      <th>pm2_5_conc_m1</th>
+      <th>o3_m1</th>
+      <th>no2_m1</th>
+      <th>co_m1</th>
+      <th>so2_m1</th>
+      <th>pm10_conc</th>
+      <th>pm2_5_conc</th>
+      <th>o3</th>
+      <th>no2</th>
+      <th>co</th>
+      <th>so2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>pm10_conc_m1</th>
+      <td>1.000000</td>
+      <td>0.707148</td>
+      <td>0.043152</td>
+      <td>0.331551</td>
+      <td>0.429339</td>
+      <td>0.415212</td>
+      <td>0.985114</td>
+      <td>0.694746</td>
+      <td>0.043333</td>
+      <td>0.317219</td>
+      <td>0.414277</td>
+      <td>0.405002</td>
+    </tr>
+    <tr>
+      <th>pm2_5_conc_m1</th>
+      <td>0.707148</td>
+      <td>1.000000</td>
+      <td>-0.004480</td>
+      <td>0.499450</td>
+      <td>0.663576</td>
+      <td>0.489852</td>
+      <td>0.695626</td>
+      <td>0.980768</td>
+      <td>-0.005004</td>
+      <td>0.477242</td>
+      <td>0.642353</td>
+      <td>0.477063</td>
+    </tr>
+    <tr>
+      <th>o3_m1</th>
+      <td>0.043152</td>
+      <td>-0.004480</td>
+      <td>1.000000</td>
+      <td>-0.496486</td>
+      <td>-0.452676</td>
+      <td>-0.033955</td>
+      <td>0.041748</td>
+      <td>-0.004744</td>
+      <td>0.963256</td>
+      <td>-0.463271</td>
+      <td>-0.449855</td>
+      <td>-0.054421</td>
+    </tr>
+    <tr>
+      <th>no2_m1</th>
+      <td>0.331551</td>
+      <td>0.499450</td>
+      <td>-0.496486</td>
+      <td>1.000000</td>
+      <td>0.783946</td>
+      <td>0.486873</td>
+      <td>0.339336</td>
+      <td>0.512129</td>
+      <td>-0.481011</td>
+      <td>0.964764</td>
+      <td>0.781801</td>
+      <td>0.501260</td>
+    </tr>
+    <tr>
+      <th>co_m1</th>
+      <td>0.429339</td>
+      <td>0.663576</td>
+      <td>-0.452676</td>
+      <td>0.783946</td>
+      <td>1.000000</td>
+      <td>0.486878</td>
+      <td>0.434231</td>
+      <td>0.669173</td>
+      <td>-0.431598</td>
+      <td>0.749916</td>
+      <td>0.958776</td>
+      <td>0.500608</td>
+    </tr>
+    <tr>
+      <th>so2_m1</th>
+      <td>0.415212</td>
+      <td>0.489852</td>
+      <td>-0.033955</td>
+      <td>0.486873</td>
+      <td>0.486878</td>
+      <td>1.000000</td>
+      <td>0.415368</td>
+      <td>0.489545</td>
+      <td>-0.017003</td>
+      <td>0.462926</td>
+      <td>0.463192</td>
+      <td>0.936534</td>
+    </tr>
+    <tr>
+      <th>pm10_conc</th>
+      <td>0.985114</td>
+      <td>0.695626</td>
+      <td>0.041748</td>
+      <td>0.339336</td>
+      <td>0.434231</td>
+      <td>0.415368</td>
+      <td>1.000000</td>
+      <td>0.707158</td>
+      <td>0.043172</td>
+      <td>0.331564</td>
+      <td>0.429340</td>
+      <td>0.415211</td>
+    </tr>
+    <tr>
+      <th>pm2_5_conc</th>
+      <td>0.694746</td>
+      <td>0.980768</td>
+      <td>-0.004744</td>
+      <td>0.512129</td>
+      <td>0.669173</td>
+      <td>0.489545</td>
+      <td>0.707158</td>
+      <td>1.000000</td>
+      <td>-0.004432</td>
+      <td>0.499431</td>
+      <td>0.663551</td>
+      <td>0.489850</td>
+    </tr>
+    <tr>
+      <th>o3</th>
+      <td>0.043333</td>
+      <td>-0.005004</td>
+      <td>0.963256</td>
+      <td>-0.481011</td>
+      <td>-0.431598</td>
+      <td>-0.017003</td>
+      <td>0.043172</td>
+      <td>-0.004432</td>
+      <td>1.000000</td>
+      <td>-0.496480</td>
+      <td>-0.452674</td>
+      <td>-0.033952</td>
+    </tr>
+    <tr>
+      <th>no2</th>
+      <td>0.317219</td>
+      <td>0.477242</td>
+      <td>-0.463271</td>
+      <td>0.964764</td>
+      <td>0.749916</td>
+      <td>0.462926</td>
+      <td>0.331564</td>
+      <td>0.499431</td>
+      <td>-0.496480</td>
+      <td>1.000000</td>
+      <td>0.783945</td>
+      <td>0.486888</td>
+    </tr>
+    <tr>
+      <th>co</th>
+      <td>0.414277</td>
+      <td>0.642353</td>
+      <td>-0.449855</td>
+      <td>0.781801</td>
+      <td>0.958776</td>
+      <td>0.463192</td>
+      <td>0.429340</td>
+      <td>0.663551</td>
+      <td>-0.452674</td>
+      <td>0.783945</td>
+      <td>1.000000</td>
+      <td>0.486882</td>
+    </tr>
+    <tr>
+      <th>so2</th>
+      <td>0.405002</td>
+      <td>0.477063</td>
+      <td>-0.054421</td>
+      <td>0.501260</td>
+      <td>0.500608</td>
+      <td>0.936534</td>
+      <td>0.415211</td>
+      <td>0.489850</td>
+      <td>-0.033952</td>
+      <td>0.486888</td>
+      <td>0.486882</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <p><em><strong>Align 4h to check correlation with 4 hours ago</strong></em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">align04</span> <span class="o">=</span> <span class="n">seoul_air</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
-<span class="n">align04</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">+</span> <span class="s2">&quot;_m4&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">align04</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
-<span class="n">align14</span> <span class="o">=</span> <span class="n">seoul_air</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">4</span><span class="p">:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
-<span class="n">align4</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">align14</span><span class="p">,</span> <span class="n">align04</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">align4</span> <span class="o">=</span> <span class="n">concat_dataframe</span><span class="p">(</span><span class="n">seoul_air</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">plot_corr</span><span class="p">(</span><span class="n">align4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_31_0.png" src="_images/AirPollution_31_0.png" />
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pm10_conc_m4</th>
+      <th>pm2_5_conc_m4</th>
+      <th>o3_m4</th>
+      <th>no2_m4</th>
+      <th>co_m4</th>
+      <th>so2_m4</th>
+      <th>pm10_conc</th>
+      <th>pm2_5_conc</th>
+      <th>o3</th>
+      <th>no2</th>
+      <th>co</th>
+      <th>so2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>pm10_conc_m4</th>
+      <td>1.000000</td>
+      <td>0.707151</td>
+      <td>0.043145</td>
+      <td>0.331543</td>
+      <td>0.429334</td>
+      <td>0.415256</td>
+      <td>0.876869</td>
+      <td>0.618933</td>
+      <td>0.032503</td>
+      <td>0.276897</td>
+      <td>0.365164</td>
+      <td>0.354534</td>
+    </tr>
+    <tr>
+      <th>pm2_5_conc_m4</th>
+      <td>0.707151</td>
+      <td>1.000000</td>
+      <td>-0.004491</td>
+      <td>0.499435</td>
+      <td>0.663572</td>
+      <td>0.489961</td>
+      <td>0.618754</td>
+      <td>0.870130</td>
+      <td>-0.011483</td>
+      <td>0.408018</td>
+      <td>0.564548</td>
+      <td>0.413484</td>
+    </tr>
+    <tr>
+      <th>o3_m4</th>
+      <td>0.043145</td>
+      <td>-0.004491</td>
+      <td>1.000000</td>
+      <td>-0.496499</td>
+      <td>-0.452685</td>
+      <td>-0.033974</td>
+      <td>0.033781</td>
+      <td>-0.007799</td>
+      <td>0.621736</td>
+      <td>-0.240025</td>
+      <td>-0.354697</td>
+      <td>-0.100152</td>
+    </tr>
+    <tr>
+      <th>no2_m4</th>
+      <td>0.331543</td>
+      <td>0.499435</td>
+      <td>-0.496499</td>
+      <td>1.000000</td>
+      <td>0.783943</td>
+      <td>0.486946</td>
+      <td>0.325986</td>
+      <td>0.502044</td>
+      <td>-0.318022</td>
+      <td>0.705311</td>
+      <td>0.670791</td>
+      <td>0.479951</td>
+    </tr>
+    <tr>
+      <th>co_m4</th>
+      <td>0.429334</td>
+      <td>0.663572</td>
+      <td>-0.452685</td>
+      <td>0.783943</td>
+      <td>1.000000</td>
+      <td>0.486943</td>
+      <td>0.405671</td>
+      <td>0.620448</td>
+      <td>-0.308100</td>
+      <td>0.574466</td>
+      <td>0.797095</td>
+      <td>0.490781</td>
+    </tr>
+    <tr>
+      <th>so2_m4</th>
+      <td>0.415256</td>
+      <td>0.489961</td>
+      <td>-0.033974</td>
+      <td>0.486946</td>
+      <td>0.486943</td>
+      <td>1.000000</td>
+      <td>0.386347</td>
+      <td>0.454028</td>
+      <td>-0.011558</td>
+      <td>0.413558</td>
+      <td>0.415538</td>
+      <td>0.772649</td>
+    </tr>
+    <tr>
+      <th>pm10_conc</th>
+      <td>0.876869</td>
+      <td>0.618754</td>
+      <td>0.033781</td>
+      <td>0.325986</td>
+      <td>0.405671</td>
+      <td>0.386347</td>
+      <td>1.000000</td>
+      <td>0.707240</td>
+      <td>0.043183</td>
+      <td>0.331673</td>
+      <td>0.429383</td>
+      <td>0.415211</td>
+    </tr>
+    <tr>
+      <th>pm2_5_conc</th>
+      <td>0.618933</td>
+      <td>0.870130</td>
+      <td>-0.007799</td>
+      <td>0.502044</td>
+      <td>0.620448</td>
+      <td>0.454028</td>
+      <td>0.707240</td>
+      <td>1.000000</td>
+      <td>-0.004452</td>
+      <td>0.499371</td>
+      <td>0.663536</td>
+      <td>0.489903</td>
+    </tr>
+    <tr>
+      <th>o3</th>
+      <td>0.032503</td>
+      <td>-0.011483</td>
+      <td>0.621736</td>
+      <td>-0.318022</td>
+      <td>-0.308100</td>
+      <td>-0.011558</td>
+      <td>0.043183</td>
+      <td>-0.004452</td>
+      <td>1.000000</td>
+      <td>-0.496566</td>
+      <td>-0.452697</td>
+      <td>-0.033946</td>
+    </tr>
+    <tr>
+      <th>no2</th>
+      <td>0.276897</td>
+      <td>0.408018</td>
+      <td>-0.240025</td>
+      <td>0.705311</td>
+      <td>0.574466</td>
+      <td>0.413558</td>
+      <td>0.331673</td>
+      <td>0.499371</td>
+      <td>-0.496566</td>
+      <td>1.000000</td>
+      <td>0.783954</td>
+      <td>0.486986</td>
+    </tr>
+    <tr>
+      <th>co</th>
+      <td>0.365164</td>
+      <td>0.564548</td>
+      <td>-0.354697</td>
+      <td>0.670791</td>
+      <td>0.797095</td>
+      <td>0.415538</td>
+      <td>0.429383</td>
+      <td>0.663536</td>
+      <td>-0.452697</td>
+      <td>0.783954</td>
+      <td>1.000000</td>
+      <td>0.486913</td>
+    </tr>
+    <tr>
+      <th>so2</th>
+      <td>0.354534</td>
+      <td>0.413484</td>
+      <td>-0.100152</td>
+      <td>0.479951</td>
+      <td>0.490781</td>
+      <td>0.772649</td>
+      <td>0.415211</td>
+      <td>0.489903</td>
+      <td>-0.033946</td>
+      <td>0.486986</td>
+      <td>0.486913</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p><em><strong>Plot weather &amp; air quality together</strong></em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_corr</span><span class="p">(</span><span class="n">air_weather2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_33_0.png" src="_images/AirPollution_33_0.png" />
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>temperature(C)</th>
+      <th>feel_like(C)</th>
+      <th>wind_speed(km/h)</th>
+      <th>wind_gust(km/h)</th>
+      <th>cloud(%)</th>
+      <th>humidity(%)</th>
+      <th>rain(mm)</th>
+      <th>pressure</th>
+      <th>pm10_conc</th>
+      <th>pm2_5_conc</th>
+      <th>o3</th>
+      <th>no2</th>
+      <th>co</th>
+      <th>so2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>temperature(C)</th>
+      <td>1.000000</td>
+      <td>0.981806</td>
+      <td>0.021879</td>
+      <td>-0.004349</td>
+      <td>0.077292</td>
+      <td>0.234867</td>
+      <td>NaN</td>
+      <td>-0.749985</td>
+      <td>-0.142618</td>
+      <td>-0.124204</td>
+      <td>0.481650</td>
+      <td>-0.256931</td>
+      <td>-0.415716</td>
+      <td>-0.259281</td>
+    </tr>
+    <tr>
+      <th>feel_like(C)</th>
+      <td>0.981806</td>
+      <td>1.000000</td>
+      <td>-0.074653</td>
+      <td>-0.107127</td>
+      <td>0.019129</td>
+      <td>0.245435</td>
+      <td>NaN</td>
+      <td>-0.708116</td>
+      <td>-0.129056</td>
+      <td>-0.090842</td>
+      <td>0.429969</td>
+      <td>-0.182776</td>
+      <td>-0.351869</td>
+      <td>-0.238542</td>
+    </tr>
+    <tr>
+      <th>wind_speed(km/h)</th>
+      <td>0.021879</td>
+      <td>-0.074653</td>
+      <td>1.000000</td>
+      <td>0.857889</td>
+      <td>-0.000069</td>
+      <td>-0.197524</td>
+      <td>NaN</td>
+      <td>-0.087575</td>
+      <td>-0.069664</td>
+      <td>-0.186205</td>
+      <td>0.361264</td>
+      <td>-0.412625</td>
+      <td>-0.331523</td>
+      <td>-0.051793</td>
+    </tr>
+    <tr>
+      <th>wind_gust(km/h)</th>
+      <td>-0.004349</td>
+      <td>-0.107127</td>
+      <td>0.857889</td>
+      <td>1.000000</td>
+      <td>0.075981</td>
+      <td>-0.055128</td>
+      <td>NaN</td>
+      <td>-0.109402</td>
+      <td>-0.058347</td>
+      <td>-0.172258</td>
+      <td>0.286174</td>
+      <td>-0.363993</td>
+      <td>-0.297482</td>
+      <td>-0.052199</td>
+    </tr>
+    <tr>
+      <th>cloud(%)</th>
+      <td>0.077292</td>
+      <td>0.019129</td>
+      <td>-0.000069</td>
+      <td>0.075981</td>
+      <td>1.000000</td>
+      <td>0.334130</td>
+      <td>NaN</td>
+      <td>-0.174398</td>
+      <td>-0.108893</td>
+      <td>-0.051359</td>
+      <td>-0.142809</td>
+      <td>-0.015621</td>
+      <td>0.001754</td>
+      <td>-0.129558</td>
+    </tr>
+    <tr>
+      <th>humidity(%)</th>
+      <td>0.234867</td>
+      <td>0.245435</td>
+      <td>-0.197524</td>
+      <td>-0.055128</td>
+      <td>0.334130</td>
+      <td>1.000000</td>
+      <td>NaN</td>
+      <td>-0.401748</td>
+      <td>-0.051906</td>
+      <td>0.078796</td>
+      <td>-0.207410</td>
+      <td>-0.006844</td>
+      <td>0.026181</td>
+      <td>-0.172439</td>
+    </tr>
+    <tr>
+      <th>rain(mm)</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>pressure</th>
+      <td>-0.749985</td>
+      <td>-0.708116</td>
+      <td>-0.087575</td>
+      <td>-0.109402</td>
+      <td>-0.174398</td>
+      <td>-0.401748</td>
+      <td>NaN</td>
+      <td>1.000000</td>
+      <td>0.117147</td>
+      <td>0.139083</td>
+      <td>-0.399144</td>
+      <td>0.327598</td>
+      <td>0.422240</td>
+      <td>0.240949</td>
+    </tr>
+    <tr>
+      <th>pm10_conc</th>
+      <td>-0.142618</td>
+      <td>-0.129056</td>
+      <td>-0.069664</td>
+      <td>-0.058347</td>
+      <td>-0.108893</td>
+      <td>-0.051906</td>
+      <td>NaN</td>
+      <td>0.117147</td>
+      <td>1.000000</td>
+      <td>0.707163</td>
+      <td>0.043103</td>
+      <td>0.331576</td>
+      <td>0.429375</td>
+      <td>0.415231</td>
+    </tr>
+    <tr>
+      <th>pm2_5_conc</th>
+      <td>-0.124204</td>
+      <td>-0.090842</td>
+      <td>-0.186205</td>
+      <td>-0.172258</td>
+      <td>-0.051359</td>
+      <td>0.078796</td>
+      <td>NaN</td>
+      <td>0.139083</td>
+      <td>0.707163</td>
+      <td>1.000000</td>
+      <td>-0.004504</td>
+      <td>0.499444</td>
+      <td>0.663587</td>
+      <td>0.489848</td>
+    </tr>
+    <tr>
+      <th>o3</th>
+      <td>0.481650</td>
+      <td>0.429969</td>
+      <td>0.361264</td>
+      <td>0.286174</td>
+      <td>-0.142809</td>
+      <td>-0.207410</td>
+      <td>NaN</td>
+      <td>-0.399144</td>
+      <td>0.043103</td>
+      <td>-0.004504</td>
+      <td>1.000000</td>
+      <td>-0.496469</td>
+      <td>-0.452699</td>
+      <td>-0.033996</td>
+    </tr>
+    <tr>
+      <th>no2</th>
+      <td>-0.256931</td>
+      <td>-0.182776</td>
+      <td>-0.412625</td>
+      <td>-0.363993</td>
+      <td>-0.015621</td>
+      <td>-0.006844</td>
+      <td>NaN</td>
+      <td>0.327598</td>
+      <td>0.331576</td>
+      <td>0.499444</td>
+      <td>-0.496469</td>
+      <td>1.000000</td>
+      <td>0.783933</td>
+      <td>0.486880</td>
+    </tr>
+    <tr>
+      <th>co</th>
+      <td>-0.415716</td>
+      <td>-0.351869</td>
+      <td>-0.331523</td>
+      <td>-0.297482</td>
+      <td>0.001754</td>
+      <td>0.026181</td>
+      <td>NaN</td>
+      <td>0.422240</td>
+      <td>0.429375</td>
+      <td>0.663587</td>
+      <td>-0.452699</td>
+      <td>0.783933</td>
+      <td>1.000000</td>
+      <td>0.486891</td>
+    </tr>
+    <tr>
+      <th>so2</th>
+      <td>-0.259281</td>
+      <td>-0.238542</td>
+      <td>-0.051793</td>
+      <td>-0.052199</td>
+      <td>-0.129558</td>
+      <td>-0.172439</td>
+      <td>NaN</td>
+      <td>0.240949</td>
+      <td>0.415231</td>
+      <td>0.489848</td>
+      <td>-0.033996</td>
+      <td>0.486880</td>
+      <td>0.486891</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">air_weather4</span> <span class="o">=</span> <span class="n">concat_dataframe</span><span class="p">(</span><span class="n">air_weather2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">align_corr4</span> <span class="o">=</span> <span class="n">align4</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">align_corr4</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_corr</span><span class="p">(</span><span class="n">air_weather4</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/AirPollution_23_0.png" src="_images/AirPollution_23_0.png" />
+<img alt="_images/AirPollution_35_0.png" src="_images/AirPollution_35_0.png" />
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>temperature(C)_m4</th>
+      <th>feel_like(C)_m4</th>
+      <th>wind_speed(km/h)_m4</th>
+      <th>wind_gust(km/h)_m4</th>
+      <th>cloud(%)_m4</th>
+      <th>humidity(%)_m4</th>
+      <th>rain(mm)_m4</th>
+      <th>pressure_m4</th>
+      <th>pm10_conc_m4</th>
+      <th>pm2_5_conc_m4</th>
+      <th>...</th>
+      <th>cloud(%)</th>
+      <th>humidity(%)</th>
+      <th>rain(mm)</th>
+      <th>pressure</th>
+      <th>pm10_conc</th>
+      <th>pm2_5_conc</th>
+      <th>o3</th>
+      <th>no2</th>
+      <th>co</th>
+      <th>so2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>temperature(C)_m4</th>
+      <td>1.000000</td>
+      <td>0.981804</td>
+      <td>0.022072</td>
+      <td>-0.004146</td>
+      <td>0.077236</td>
+      <td>0.235015</td>
+      <td>NaN</td>
+      <td>-0.749949</td>
+      <td>-0.142688</td>
+      <td>-0.124372</td>
+      <td>...</td>
+      <td>0.079009</td>
+      <td>0.326277</td>
+      <td>NaN</td>
+      <td>-0.756727</td>
+      <td>-0.145856</td>
+      <td>-0.123624</td>
+      <td>0.425337</td>
+      <td>-0.230442</td>
+      <td>-0.410146</td>
+      <td>-0.291483</td>
+    </tr>
+    <tr>
+      <th>feel_like(C)_m4</th>
+      <td>0.981804</td>
+      <td>1.000000</td>
+      <td>-0.074501</td>
+      <td>-0.106970</td>
+      <td>0.019074</td>
+      <td>0.245562</td>
+      <td>NaN</td>
+      <td>-0.708076</td>
+      <td>-0.129114</td>
+      <td>-0.090984</td>
+      <td>...</td>
+      <td>0.039804</td>
+      <td>0.315933</td>
+      <td>NaN</td>
+      <td>-0.718820</td>
+      <td>-0.128716</td>
+      <td>-0.085438</td>
+      <td>0.391508</td>
+      <td>-0.160836</td>
+      <td>-0.346428</td>
+      <td>-0.257389</td>
+    </tr>
+    <tr>
+      <th>wind_speed(km/h)_m4</th>
+      <td>0.022072</td>
+      <td>-0.074501</td>
+      <td>1.000000</td>
+      <td>0.857861</td>
+      <td>-0.000004</td>
+      <td>-0.197643</td>
+      <td>NaN</td>
+      <td>-0.087747</td>
+      <td>-0.069626</td>
+      <td>-0.186101</td>
+      <td>...</td>
+      <td>-0.024927</td>
+      <td>-0.060780</td>
+      <td>NaN</td>
+      <td>-0.061738</td>
+      <td>-0.090234</td>
+      <td>-0.209152</td>
+      <td>0.204605</td>
+      <td>-0.323206</td>
+      <td>-0.309192</td>
+      <td>-0.104160</td>
+    </tr>
+    <tr>
+      <th>wind_gust(km/h)_m4</th>
+      <td>-0.004146</td>
+      <td>-0.106970</td>
+      <td>0.857861</td>
+      <td>1.000000</td>
+      <td>0.076059</td>
+      <td>-0.055238</td>
+      <td>NaN</td>
+      <td>-0.109591</td>
+      <td>-0.058304</td>
+      <td>-0.172144</td>
+      <td>...</td>
+      <td>0.043105</td>
+      <td>0.067140</td>
+      <td>NaN</td>
+      <td>-0.083545</td>
+      <td>-0.081146</td>
+      <td>-0.201822</td>
+      <td>0.132980</td>
+      <td>-0.308180</td>
+      <td>-0.276312</td>
+      <td>-0.108613</td>
+    </tr>
+    <tr>
+      <th>cloud(%)_m4</th>
+      <td>0.077236</td>
+      <td>0.019074</td>
+      <td>-0.000004</td>
+      <td>0.076059</td>
+      <td>1.000000</td>
+      <td>0.334178</td>
+      <td>NaN</td>
+      <td>-0.174357</td>
+      <td>-0.108911</td>
+      <td>-0.051407</td>
+      <td>...</td>
+      <td>0.684645</td>
+      <td>0.345304</td>
+      <td>NaN</td>
+      <td>-0.198411</td>
+      <td>-0.107848</td>
+      <td>-0.054839</td>
+      <td>-0.116109</td>
+      <td>-0.062367</td>
+      <td>-0.016543</td>
+      <td>-0.147655</td>
+    </tr>
+    <tr>
+      <th>humidity(%)_m4</th>
+      <td>0.235015</td>
+      <td>0.245562</td>
+      <td>-0.197643</td>
+      <td>-0.055238</td>
+      <td>0.334178</td>
+      <td>1.000000</td>
+      <td>NaN</td>
+      <td>-0.401875</td>
+      <td>-0.051876</td>
+      <td>0.078889</td>
+      <td>...</td>
+      <td>0.264062</td>
+      <td>0.796021</td>
+      <td>NaN</td>
+      <td>-0.391630</td>
+      <td>-0.039426</td>
+      <td>0.066020</td>
+      <td>-0.102761</td>
+      <td>-0.114140</td>
+      <td>-0.005245</td>
+      <td>-0.145881</td>
+    </tr>
+    <tr>
+      <th>rain(mm)_m4</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>pressure_m4</th>
+      <td>-0.749949</td>
+      <td>-0.708076</td>
+      <td>-0.087747</td>
+      <td>-0.109591</td>
+      <td>-0.174357</td>
+      <td>-0.401875</td>
+      <td>NaN</td>
+      <td>1.000000</td>
+      <td>0.117197</td>
+      <td>0.139217</td>
+      <td>...</td>
+      <td>-0.134672</td>
+      <td>-0.417390</td>
+      <td>NaN</td>
+      <td>0.985243</td>
+      <td>0.116257</td>
+      <td>0.146308</td>
+      <td>-0.376620</td>
+      <td>0.336694</td>
+      <td>0.426022</td>
+      <td>0.257323</td>
+    </tr>
+    <tr>
+      <th>pm10_conc_m4</th>
+      <td>-0.142688</td>
+      <td>-0.129114</td>
+      <td>-0.069626</td>
+      <td>-0.058304</td>
+      <td>-0.108911</td>
+      <td>-0.051876</td>
+      <td>NaN</td>
+      <td>0.117197</td>
+      <td>1.000000</td>
+      <td>0.707166</td>
+      <td>...</td>
+      <td>-0.095289</td>
+      <td>-0.044470</td>
+      <td>NaN</td>
+      <td>0.116353</td>
+      <td>0.876889</td>
+      <td>0.618979</td>
+      <td>0.032439</td>
+      <td>0.276931</td>
+      <td>0.365218</td>
+      <td>0.354576</td>
+    </tr>
+    <tr>
+      <th>pm2_5_conc_m4</th>
+      <td>-0.124372</td>
+      <td>-0.090984</td>
+      <td>-0.186101</td>
+      <td>-0.172144</td>
+      <td>-0.051407</td>
+      <td>0.078889</td>
+      <td>NaN</td>
+      <td>0.139217</td>
+      <td>0.707166</td>
+      <td>1.000000</td>
+      <td>...</td>
+      <td>-0.038625</td>
+      <td>0.077351</td>
+      <td>NaN</td>
+      <td>0.130949</td>
+      <td>0.618786</td>
+      <td>0.870160</td>
+      <td>-0.011558</td>
+      <td>0.408026</td>
+      <td>0.564595</td>
+      <td>0.413511</td>
+    </tr>
+    <tr>
+      <th>o3_m4</th>
+      <td>0.481655</td>
+      <td>0.429965</td>
+      <td>0.361354</td>
+      <td>0.286264</td>
+      <td>-0.142831</td>
+      <td>-0.207372</td>
+      <td>NaN</td>
+      <td>-0.399149</td>
+      <td>0.043077</td>
+      <td>-0.004570</td>
+      <td>...</td>
+      <td>-0.150382</td>
+      <td>-0.002849</td>
+      <td>NaN</td>
+      <td>-0.382252</td>
+      <td>0.033741</td>
+      <td>-0.007825</td>
+      <td>0.621839</td>
+      <td>-0.240051</td>
+      <td>-0.354732</td>
+      <td>-0.100149</td>
+    </tr>
+    <tr>
+      <th>no2_m4</th>
+      <td>-0.257030</td>
+      <td>-0.182853</td>
+      <td>-0.412603</td>
+      <td>-0.363966</td>
+      <td>-0.015644</td>
+      <td>-0.006808</td>
+      <td>NaN</td>
+      <td>0.327681</td>
+      <td>0.331566</td>
+      <td>0.499430</td>
+      <td>...</td>
+      <td>0.030953</td>
+      <td>-0.020166</td>
+      <td>NaN</td>
+      <td>0.294944</td>
+      <td>0.326011</td>
+      <td>0.502041</td>
+      <td>-0.318093</td>
+      <td>0.705346</td>
+      <td>0.670798</td>
+      <td>0.479967</td>
+    </tr>
+    <tr>
+      <th>co_m4</th>
+      <td>-0.415804</td>
+      <td>-0.351936</td>
+      <td>-0.331514</td>
+      <td>-0.297471</td>
+      <td>0.001740</td>
+      <td>0.026202</td>
+      <td>NaN</td>
+      <td>0.422308</td>
+      <td>0.429373</td>
+      <td>0.663603</td>
+      <td>...</td>
+      <td>0.023832</td>
+      <td>-0.049030</td>
+      <td>NaN</td>
+      <td>0.398424</td>
+      <td>0.405701</td>
+      <td>0.620462</td>
+      <td>-0.308181</td>
+      <td>0.574473</td>
+      <td>0.797112</td>
+      <td>0.490781</td>
+    </tr>
+    <tr>
+      <th>so2_m4</th>
+      <td>-0.259215</td>
+      <td>-0.238481</td>
+      <td>-0.051920</td>
+      <td>-0.052332</td>
+      <td>-0.129525</td>
+      <td>-0.172496</td>
+      <td>NaN</td>
+      <td>0.240881</td>
+      <td>0.415276</td>
+      <td>0.489966</td>
+      <td>...</td>
+      <td>-0.101304</td>
+      <td>-0.122903</td>
+      <td>NaN</td>
+      <td>0.221476</td>
+      <td>0.386382</td>
+      <td>0.454047</td>
+      <td>-0.011604</td>
+      <td>0.413586</td>
+      <td>0.415562</td>
+      <td>0.772660</td>
+    </tr>
+    <tr>
+      <th>temperature(C)</th>
+      <td>0.955481</td>
+      <td>0.951947</td>
+      <td>-0.063597</td>
+      <td>-0.083340</td>
+      <td>0.077851</td>
+      <td>0.293973</td>
+      <td>NaN</td>
+      <td>-0.727475</td>
+      <td>-0.150943</td>
+      <td>-0.129059</td>
+      <td>...</td>
+      <td>0.077167</td>
+      <td>0.234722</td>
+      <td>NaN</td>
+      <td>-0.750028</td>
+      <td>-0.142567</td>
+      <td>-0.124452</td>
+      <td>0.481701</td>
+      <td>-0.257357</td>
+      <td>-0.415957</td>
+      <td>-0.259287</td>
+    </tr>
+    <tr>
+      <th>feel_like(C)</th>
+      <td>0.939947</td>
+      <td>0.960100</td>
+      <td>-0.121149</td>
+      <td>-0.144347</td>
+      <td>0.027869</td>
+      <td>0.299470</td>
+      <td>NaN</td>
+      <td>-0.687781</td>
+      <td>-0.139409</td>
+      <td>-0.103240</td>
+      <td>...</td>
+      <td>0.018949</td>
+      <td>0.245264</td>
+      <td>NaN</td>
+      <td>-0.708214</td>
+      <td>-0.128995</td>
+      <td>-0.091162</td>
+      <td>0.430058</td>
+      <td>-0.183309</td>
+      <td>-0.352193</td>
+      <td>-0.238564</td>
+    </tr>
+    <tr>
+      <th>wind_speed(km/h)</th>
+      <td>-0.006314</td>
+      <td>-0.071757</td>
+      <td>0.501806</td>
+      <td>0.452198</td>
+      <td>0.053367</td>
+      <td>-0.122119</td>
+      <td>NaN</td>
+      <td>-0.081146</td>
+      <td>-0.049122</td>
+      <td>-0.144102</td>
+      <td>...</td>
+      <td>-0.000087</td>
+      <td>-0.197562</td>
+      <td>NaN</td>
+      <td>-0.087560</td>
+      <td>-0.069655</td>
+      <td>-0.186244</td>
+      <td>0.361260</td>
+      <td>-0.412728</td>
+      <td>-0.331552</td>
+      <td>-0.051787</td>
+    </tr>
+    <tr>
+      <th>wind_gust(km/h)</th>
+      <td>0.006017</td>
+      <td>-0.066307</td>
+      <td>0.505671</td>
+      <td>0.512144</td>
+      <td>0.094360</td>
+      <td>-0.060167</td>
+      <td>NaN</td>
+      <td>-0.103862</td>
+      <td>-0.037311</td>
+      <td>-0.131288</td>
+      <td>...</td>
+      <td>0.075982</td>
+      <td>-0.055132</td>
+      <td>NaN</td>
+      <td>-0.109404</td>
+      <td>-0.058348</td>
+      <td>-0.172270</td>
+      <td>0.286174</td>
+      <td>-0.364046</td>
+      <td>-0.297491</td>
+      <td>-0.052199</td>
+    </tr>
+    <tr>
+      <th>cloud(%)</th>
+      <td>0.079009</td>
+      <td>0.039804</td>
+      <td>-0.024927</td>
+      <td>0.043105</td>
+      <td>0.684645</td>
+      <td>0.264062</td>
+      <td>NaN</td>
+      <td>-0.134672</td>
+      <td>-0.095289</td>
+      <td>-0.038625</td>
+      <td>...</td>
+      <td>1.000000</td>
+      <td>0.334084</td>
+      <td>NaN</td>
+      <td>-0.174362</td>
+      <td>-0.108867</td>
+      <td>-0.051436</td>
+      <td>-0.142831</td>
+      <td>-0.015739</td>
+      <td>0.001705</td>
+      <td>-0.129546</td>
+    </tr>
+    <tr>
+      <th>humidity(%)</th>
+      <td>0.326277</td>
+      <td>0.315933</td>
+      <td>-0.060780</td>
+      <td>0.067140</td>
+      <td>0.345304</td>
+      <td>0.796021</td>
+      <td>NaN</td>
+      <td>-0.417390</td>
+      <td>-0.044470</td>
+      <td>0.077351</td>
+      <td>...</td>
+      <td>0.334084</td>
+      <td>1.000000</td>
+      <td>NaN</td>
+      <td>-0.401713</td>
+      <td>-0.051868</td>
+      <td>0.078698</td>
+      <td>-0.207446</td>
+      <td>-0.007013</td>
+      <td>0.026111</td>
+      <td>-0.172425</td>
+    </tr>
+    <tr>
+      <th>rain(mm)</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>pressure</th>
+      <td>-0.756727</td>
+      <td>-0.718820</td>
+      <td>-0.061738</td>
+      <td>-0.083545</td>
+      <td>-0.198411</td>
+      <td>-0.391630</td>
+      <td>NaN</td>
+      <td>0.985243</td>
+      <td>0.116353</td>
+      <td>0.130949</td>
+      <td>...</td>
+      <td>-0.174362</td>
+      <td>-0.401713</td>
+      <td>NaN</td>
+      <td>1.000000</td>
+      <td>0.117124</td>
+      <td>0.139160</td>
+      <td>-0.399138</td>
+      <td>0.327753</td>
+      <td>0.422304</td>
+      <td>0.240941</td>
+    </tr>
+    <tr>
+      <th>pm10_conc</th>
+      <td>-0.145856</td>
+      <td>-0.128716</td>
+      <td>-0.090234</td>
+      <td>-0.081146</td>
+      <td>-0.107848</td>
+      <td>-0.039426</td>
+      <td>NaN</td>
+      <td>0.116257</td>
+      <td>0.876889</td>
+      <td>0.618786</td>
+      <td>...</td>
+      <td>-0.108867</td>
+      <td>-0.051868</td>
+      <td>NaN</td>
+      <td>0.117124</td>
+      <td>1.000000</td>
+      <td>0.707255</td>
+      <td>0.043115</td>
+      <td>0.331696</td>
+      <td>0.429422</td>
+      <td>0.415231</td>
+    </tr>
+    <tr>
+      <th>pm2_5_conc</th>
+      <td>-0.123624</td>
+      <td>-0.085438</td>
+      <td>-0.209152</td>
+      <td>-0.201822</td>
+      <td>-0.054839</td>
+      <td>0.066020</td>
+      <td>NaN</td>
+      <td>0.146308</td>
+      <td>0.618979</td>
+      <td>0.870160</td>
+      <td>...</td>
+      <td>-0.051436</td>
+      <td>0.078698</td>
+      <td>NaN</td>
+      <td>0.139160</td>
+      <td>0.707255</td>
+      <td>1.000000</td>
+      <td>-0.004530</td>
+      <td>0.499366</td>
+      <td>0.663566</td>
+      <td>0.489908</td>
+    </tr>
+    <tr>
+      <th>o3</th>
+      <td>0.425337</td>
+      <td>0.391508</td>
+      <td>0.204605</td>
+      <td>0.132980</td>
+      <td>-0.116109</td>
+      <td>-0.102761</td>
+      <td>NaN</td>
+      <td>-0.376620</td>
+      <td>0.032439</td>
+      <td>-0.011558</td>
+      <td>...</td>
+      <td>-0.142831</td>
+      <td>-0.207446</td>
+      <td>NaN</td>
+      <td>-0.399138</td>
+      <td>0.043115</td>
+      <td>-0.004530</td>
+      <td>1.000000</td>
+      <td>-0.496580</td>
+      <td>-0.452730</td>
+      <td>-0.033990</td>
+    </tr>
+    <tr>
+      <th>no2</th>
+      <td>-0.230442</td>
+      <td>-0.160836</td>
+      <td>-0.323206</td>
+      <td>-0.308180</td>
+      <td>-0.062367</td>
+      <td>-0.114140</td>
+      <td>NaN</td>
+      <td>0.336694</td>
+      <td>0.276931</td>
+      <td>0.408026</td>
+      <td>...</td>
+      <td>-0.015739</td>
+      <td>-0.007013</td>
+      <td>NaN</td>
+      <td>0.327753</td>
+      <td>0.331696</td>
+      <td>0.499366</td>
+      <td>-0.496580</td>
+      <td>1.000000</td>
+      <td>0.783944</td>
+      <td>0.486994</td>
+    </tr>
+    <tr>
+      <th>co</th>
+      <td>-0.410146</td>
+      <td>-0.346428</td>
+      <td>-0.309192</td>
+      <td>-0.276312</td>
+      <td>-0.016543</td>
+      <td>-0.005245</td>
+      <td>NaN</td>
+      <td>0.426022</td>
+      <td>0.365218</td>
+      <td>0.564595</td>
+      <td>...</td>
+      <td>0.001705</td>
+      <td>0.026111</td>
+      <td>NaN</td>
+      <td>0.422304</td>
+      <td>0.429422</td>
+      <td>0.663566</td>
+      <td>-0.452730</td>
+      <td>0.783944</td>
+      <td>1.000000</td>
+      <td>0.486925</td>
+    </tr>
+    <tr>
+      <th>so2</th>
+      <td>-0.291483</td>
+      <td>-0.257389</td>
+      <td>-0.104160</td>
+      <td>-0.108613</td>
+      <td>-0.147655</td>
+      <td>-0.145881</td>
+      <td>NaN</td>
+      <td>0.257323</td>
+      <td>0.354576</td>
+      <td>0.413511</td>
+      <td>...</td>
+      <td>-0.129546</td>
+      <td>-0.172425</td>
+      <td>NaN</td>
+      <td>0.240941</td>
+      <td>0.415231</td>
+      <td>0.489908</td>
+      <td>-0.033990</td>
+      <td>0.486994</td>
+      <td>0.486925</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+<p>28 rows × 28 columns</p>
+</div></div></div>
+</div>
+</div>
+<div class="section" id="training-testing-split">
+<h3>3.6 Training, Testing Split<a class="headerlink" href="#training-testing-split" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pm2_5_conc&#39;</span><span class="p">,</span> <span class="s1">&#39;pm10_conc&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset1</span> <span class="o">=</span> <span class="n">concat_dataframe</span><span class="p">(</span><span class="n">air_weather2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">training1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="s2">&quot;2017-12-31 23:00:00&quot;</span><span class="p">]</span>
+<span class="n">training1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">testing1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="s2">&quot;2017-12-31 23:00:00&quot;</span><span class="p">]</span>
+<span class="n">testing1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X1_train</span><span class="p">,</span> <span class="n">y1_train</span> <span class="o">=</span> <span class="n">training1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">training1</span><span class="p">[</span><span class="s1">&#39;pm2_5_conc&#39;</span><span class="p">]</span>
+<span class="n">X1_test</span><span class="p">,</span> <span class="n">y1_test</span> <span class="o">=</span> <span class="n">testing1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">testing1</span><span class="p">[</span><span class="s1">&#39;pm2_5_conc&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">23</span><span class="o">-</span><span class="n">b3e90dfa8e13</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">dataset1</span> <span class="o">=</span> <span class="n">concat_dataframe</span><span class="p">(</span><span class="n">air_weather2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">training1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="s2">&quot;2017-12-31 23:00:00&quot;</span><span class="p">]</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">training1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">testing1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="s2">&quot;2017-12-31 23:00:00&quot;</span><span class="p">]</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">testing1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;drp_columns&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">build_dataset</span><span class="p">(</span><span class="n">timeshift</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">drp_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;datetime_m</span><span class="si">%i</span><span class="s1">&#39;</span><span class="o">%</span><span class="k">timeshift</span>, &#39;weather_m%i&#39;%timeshift, &#39;wind_direction_m%i&#39;%timeshift, &#39;weather&#39;, &#39;wind_direction&#39;]
+    <span class="n">dataset1</span> <span class="o">=</span> <span class="n">concat_dataframe</span><span class="p">(</span><span class="n">air_weather2</span><span class="p">,</span> <span class="n">timeshift</span><span class="p">)</span>
+    <span class="n">training1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="s2">&quot;2016-12-31 23:00:00&quot;</span><span class="p">]</span>
+    <span class="n">training1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">testing1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[(</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="s2">&quot;2016-12-31 23:00:00&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="s2">&quot;2017-12-31 23:00:00&quot;</span><span class="p">)]</span>
+    <span class="n">testing1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">X1_train</span><span class="p">,</span> <span class="n">y1_train</span> <span class="o">=</span> <span class="n">training1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">training1</span><span class="p">[</span><span class="s1">&#39;pm2_5_conc&#39;</span><span class="p">]</span>
+    <span class="n">X1_test</span><span class="p">,</span> <span class="n">y1_test</span> <span class="o">=</span> <span class="n">testing1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">testing1</span><span class="p">[</span><span class="s1">&#39;pm2_5_conc&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">X1_train</span><span class="p">,</span> <span class="n">y1_train</span><span class="p">,</span> <span class="n">X1_test</span><span class="p">,</span> <span class="n">y1_test</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><em><strong>Create training dataset to predict time ahead: 1h, 4h, 8h, 12h, 16h, 24h</strong></em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X1_train</span><span class="p">,</span> <span class="n">y1_train</span><span class="p">,</span> <span class="n">X1_test</span><span class="p">,</span> <span class="n">y1_test</span> <span class="o">=</span> <span class="n">build_dataset</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">X4_train</span><span class="p">,</span> <span class="n">y4_train</span><span class="p">,</span> <span class="n">X4_test</span><span class="p">,</span> <span class="n">y4_test</span> <span class="o">=</span> <span class="n">build_dataset</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">X8_train</span><span class="p">,</span> <span class="n">y8_train</span><span class="p">,</span> <span class="n">X8_test</span><span class="p">,</span> <span class="n">y8_test</span> <span class="o">=</span> <span class="n">build_dataset</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">X12_train</span><span class="p">,</span> <span class="n">y12_train</span><span class="p">,</span> <span class="n">X12_test</span><span class="p">,</span> <span class="n">y12_test</span> <span class="o">=</span> <span class="n">build_dataset</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">X16_train</span><span class="p">,</span> <span class="n">y16_train</span><span class="p">,</span> <span class="n">X16_test</span><span class="p">,</span> <span class="n">y16_test</span> <span class="o">=</span> <span class="n">build_dataset</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">X20_train</span><span class="p">,</span> <span class="n">y20_train</span><span class="p">,</span> <span class="n">X20_test</span><span class="p">,</span> <span class="n">y20_test</span> <span class="o">=</span> <span class="n">build_dataset</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">X24_train</span><span class="p">,</span> <span class="n">y24_train</span><span class="p">,</span> <span class="n">X24_test</span><span class="p">,</span> <span class="n">y24_test</span> <span class="o">=</span> <span class="n">build_dataset</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div class="section" id="model-construction">
 <h2>4. Model Construction<a class="headerlink" href="#model-construction" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><em><strong>Create simple XGBoost model for corresponding dataset</strong></em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_pred</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+    <span class="n">p1_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;pred&#39;</span><span class="p">:</span> <span class="n">pred</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">)))})</span>
+    <span class="n">fg</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">p1_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;pred&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pred&quot;</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">p1_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;PM2_5 Concentration&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model1</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X1_train</span><span class="p">,</span> <span class="n">y1_train</span><span class="p">)</span>
+<span class="n">pred1</span> <span class="o">=</span> <span class="n">model1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X1_test</span><span class="p">)</span>
+<span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">pred1</span><span class="p">,</span> <span class="n">y1_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred1</span><span class="p">,</span> <span class="n">y1_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model4</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X4_train</span><span class="p">,</span> <span class="n">y4_train</span><span class="p">)</span>
+<span class="n">pred4</span> <span class="o">=</span> <span class="n">model4</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X4_test</span><span class="p">)</span>
+<span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">pred4</span><span class="p">,</span> <span class="n">y4_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred4</span><span class="p">,</span> <span class="n">y4_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model8</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X8_train</span><span class="p">,</span> <span class="n">y8_train</span><span class="p">)</span>
+<span class="n">pred8</span> <span class="o">=</span> <span class="n">model8</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X8_test</span><span class="p">)</span>
+<span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">pred8</span><span class="p">,</span> <span class="n">y8_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred8</span><span class="p">,</span> <span class="n">y8_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model12</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X12_train</span><span class="p">,</span> <span class="n">y12_train</span><span class="p">)</span>
+<span class="n">pred12</span> <span class="o">=</span> <span class="n">model8</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X12_test</span><span class="p">)</span>
+<span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">pred12</span><span class="p">,</span> <span class="n">y12_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred12</span><span class="p">,</span> <span class="n">y12_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model24</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X24_train</span><span class="p">,</span> <span class="n">y24_train</span><span class="p">)</span>
+<span class="n">pred24</span> <span class="o">=</span> <span class="n">model24</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X24_test</span><span class="p">)</span>
+<span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">pred24</span><span class="p">,</span> <span class="n">y24_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred24</span><span class="p">,</span> <span class="n">y24_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 <div class="section" id="explain-the-results">
 <h2>5. Explain the Results<a class="headerlink" href="#explain-the-results" title="Permalink to this headline">¶</a></h2>
