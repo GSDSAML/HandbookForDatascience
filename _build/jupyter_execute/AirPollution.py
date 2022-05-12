@@ -248,18 +248,6 @@ target = ['pm2_5_conc', 'pm10_conc']
 # In[23]:
 
 
-dataset1 = concat_dataframe(air_weather2, 1)
-training1 = dataset1[dataset1['datetime'] <= "2017-12-31 23:00:00"]
-training1.drop(drp_columns, axis=1, inplace=True)
-testing1 = dataset1[dataset1['datetime'] > "2017-12-31 23:00:00"]
-testing1.drop(drp_columns, axis=1, inplace=True)
-X1_train, y1_train = training1.drop(target, axis=1), training1['pm2_5_conc']
-X1_test, y1_test = testing1.drop(target, axis=1), testing1['pm2_5_conc']
-
-
-# In[ ]:
-
-
 def build_dataset(timeshift=1):
     drp_columns = ['datetime', 'datetime_m%i'%timeshift, 'weather_m%i'%timeshift, 'wind_direction_m%i'%timeshift, 'weather', 'wind_direction']
     dataset1 = concat_dataframe(air_weather2, timeshift)
@@ -274,7 +262,7 @@ def build_dataset(timeshift=1):
 
 # ***Create training dataset to predict time ahead: 1h, 4h, 8h, 12h, 16h, 24h***
 
-# In[ ]:
+# In[24]:
 
 
 X1_train, y1_train, X1_test, y1_test = build_dataset(1)
@@ -288,7 +276,7 @@ X24_train, y24_train, X24_test, y24_test = build_dataset(24)
 
 # ## 4. Model Construction
 
-# In[ ]:
+# In[25]:
 
 
 import xgboost as xgb
@@ -297,7 +285,7 @@ from sklearn.metrics import mean_absolute_error
 
 # ***Create simple XGBoost model for corresponding dataset***
 
-# In[ ]:
+# In[26]:
 
 
 def plot_pred(pred, label):
@@ -310,7 +298,7 @@ def plot_pred(pred, label):
     plt.show()
 
 
-# In[ ]:
+# In[27]:
 
 
 model1 = xgb.XGBRegressor().fit(X1_train, y1_train)
@@ -318,13 +306,13 @@ pred1 = model1.predict(X1_test)
 mean_absolute_error(pred1, y1_test)
 
 
-# In[ ]:
+# In[28]:
 
 
 plot_pred(pred1, y1_test)
 
 
-# In[ ]:
+# In[29]:
 
 
 model4 = xgb.XGBRegressor().fit(X4_train, y4_train)
@@ -332,13 +320,13 @@ pred4 = model4.predict(X4_test)
 mean_absolute_error(pred4, y4_test)
 
 
-# In[ ]:
+# In[30]:
 
 
 plot_pred(pred4, y4_test)
 
 
-# In[ ]:
+# In[31]:
 
 
 model8 = xgb.XGBRegressor().fit(X8_train, y8_train)
@@ -346,13 +334,13 @@ pred8 = model8.predict(X8_test)
 mean_absolute_error(pred8, y8_test)
 
 
-# In[ ]:
+# In[32]:
 
 
 plot_pred(pred8, y8_test)
 
 
-# In[ ]:
+# In[33]:
 
 
 model12 = xgb.XGBRegressor().fit(X12_train, y12_train)
@@ -360,13 +348,13 @@ pred12 = model8.predict(X12_test)
 mean_absolute_error(pred12, y12_test)
 
 
-# In[ ]:
+# In[34]:
 
 
 plot_pred(pred12, y12_test)
 
 
-# In[ ]:
+# In[35]:
 
 
 model24 = xgb.XGBRegressor().fit(X24_train, y24_train)
@@ -374,7 +362,7 @@ pred24 = model24.predict(X24_test)
 mean_absolute_error(pred24, y24_test)
 
 
-# In[ ]:
+# In[36]:
 
 
 plot_pred(pred24, y24_test)

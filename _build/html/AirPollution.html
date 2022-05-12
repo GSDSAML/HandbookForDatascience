@@ -2816,33 +2816,6 @@ num of outlier pressure 0
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset1</span> <span class="o">=</span> <span class="n">concat_dataframe</span><span class="p">(</span><span class="n">air_weather2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">training1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="s2">&quot;2017-12-31 23:00:00&quot;</span><span class="p">]</span>
-<span class="n">training1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">testing1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="s2">&quot;2017-12-31 23:00:00&quot;</span><span class="p">]</span>
-<span class="n">testing1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">X1_train</span><span class="p">,</span> <span class="n">y1_train</span> <span class="o">=</span> <span class="n">training1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">training1</span><span class="p">[</span><span class="s1">&#39;pm2_5_conc&#39;</span><span class="p">]</span>
-<span class="n">X1_test</span><span class="p">,</span> <span class="n">y1_test</span> <span class="o">=</span> <span class="n">testing1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">testing1</span><span class="p">[</span><span class="s1">&#39;pm2_5_conc&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">23</span><span class="o">-</span><span class="n">b3e90dfa8e13</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">dataset1</span> <span class="o">=</span> <span class="n">concat_dataframe</span><span class="p">(</span><span class="n">air_weather2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">training1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="s2">&quot;2017-12-31 23:00:00&quot;</span><span class="p">]</span>
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">training1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">testing1</span> <span class="o">=</span> <span class="n">dataset1</span><span class="p">[</span><span class="n">dataset1</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="s2">&quot;2017-12-31 23:00:00&quot;</span><span class="p">]</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">testing1</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">drp_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;drp_columns&#39; is not defined
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">build_dataset</span><span class="p">(</span><span class="n">timeshift</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">drp_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;datetime_m</span><span class="si">%i</span><span class="s1">&#39;</span><span class="o">%</span><span class="k">timeshift</span>, &#39;weather_m%i&#39;%timeshift, &#39;wind_direction_m%i&#39;%timeshift, &#39;weather&#39;, &#39;wind_direction&#39;]
     <span class="n">dataset1</span> <span class="o">=</span> <span class="n">concat_dataframe</span><span class="p">(</span><span class="n">air_weather2</span><span class="p">,</span> <span class="n">timeshift</span><span class="p">)</span>
@@ -2906,12 +2879,20 @@ num of outlier pressure 0
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.1089031502536444
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred1</span><span class="p">,</span> <span class="n">y1_test</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_46_0.png" src="_images/AirPollution_46_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2922,12 +2903,20 @@ num of outlier pressure 0
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4.250836542139859
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred4</span><span class="p">,</span> <span class="n">y4_test</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_48_0.png" src="_images/AirPollution_48_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2938,12 +2927,20 @@ num of outlier pressure 0
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5.157167653076044
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred8</span><span class="p">,</span> <span class="n">y8_test</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_50_0.png" src="_images/AirPollution_50_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2954,12 +2951,20 @@ num of outlier pressure 0
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5.579344656110048
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred12</span><span class="p">,</span> <span class="n">y12_test</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_52_0.png" src="_images/AirPollution_52_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2970,12 +2975,20 @@ num of outlier pressure 0
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>6.368788575998095
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pred</span><span class="p">(</span><span class="n">pred24</span><span class="p">,</span> <span class="n">y24_test</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/AirPollution_54_0.png" src="_images/AirPollution_54_0.png" />
 </div>
 </div>
 </div>

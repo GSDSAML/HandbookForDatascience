@@ -222,16 +222,6 @@ target = ['pm2_5_conc', 'pm10_conc']
 ```
 
 ```{code-cell} ipython3
-dataset1 = concat_dataframe(air_weather2, 1)
-training1 = dataset1[dataset1['datetime'] <= "2017-12-31 23:00:00"]
-training1.drop(drp_columns, axis=1, inplace=True)
-testing1 = dataset1[dataset1['datetime'] > "2017-12-31 23:00:00"]
-testing1.drop(drp_columns, axis=1, inplace=True)
-X1_train, y1_train = training1.drop(target, axis=1), training1['pm2_5_conc']
-X1_test, y1_test = testing1.drop(target, axis=1), testing1['pm2_5_conc']
-```
-
-```{code-cell} ipython3
 def build_dataset(timeshift=1):
     drp_columns = ['datetime', 'datetime_m%i'%timeshift, 'weather_m%i'%timeshift, 'wind_direction_m%i'%timeshift, 'weather', 'wind_direction']
     dataset1 = concat_dataframe(air_weather2, timeshift)
