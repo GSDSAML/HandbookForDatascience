@@ -14,7 +14,7 @@ kernelspec:
 # Crime Rate Analysis
 
 ```{code-cell} ipython3
-folder = "./data/crime_rate"
+folder = "/home/alexbui/workspace/HandbookForDatascience/notebooks/data/crime_rate"
 ```
 
 ```{code-cell} ipython3

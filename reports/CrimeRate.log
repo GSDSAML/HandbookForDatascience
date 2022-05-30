@@ -81,6 +81,6 @@ cr_data = pd.read_csv(folder + "/estimated_crimes.csv")
 [0m[1;32m    703[0m                 [0mhandle[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
 [1;32m    704[0m                 [0mioargs[0m[0;34m.[0m[0mmode[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
 
-[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: './data/crime_rate/estimated_crimes.csv'
-FileNotFoundError: [Errno 2] No such file or directory: './data/crime_rate/estimated_crimes.csv'
+[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: '/home/alexbui/workspace/HandbookForDatascience/notebooks/data/crime_rate/estimated_crimes.csv'
+FileNotFoundError: [Errno 2] No such file or directory: '/home/alexbui/workspace/HandbookForDatascience/notebooks/data/crime_rate/estimated_crimes.csv'
 
