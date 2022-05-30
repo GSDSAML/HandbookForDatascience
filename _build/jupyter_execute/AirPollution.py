@@ -73,7 +73,7 @@ seoul_air.drop(["PM10_AQI", "PM2_5_AQI"], axis=1, inplace=True)
 seoul_air.columns = [c.lower() for c in seoul_air.columns]
 
 
-# In[4]:
+# In[ ]:
 
 
 seoul_air
@@ -81,7 +81,7 @@ seoul_air
 
 # ***Load weather data***
 
-# In[5]:
+# In[ ]:
 
 
 weather = pd.read_csv(path + "data/weather_forecasts.csv")
@@ -91,21 +91,21 @@ weather
 
 # ### 3.2 Check missing values
 
-# In[6]:
+# In[ ]:
 
 
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-# In[7]:
+# In[ ]:
 
 
 for c in seoul_air.columns:
     print(c, seoul_air[c].isnull().sum())
 
 
-# In[8]:
+# In[ ]:
 
 
 for c in weather.columns:
@@ -114,7 +114,7 @@ for c in weather.columns:
 
 # ### 3.3 Check outlier values
 
-# In[9]:
+# In[ ]:
 
 
 def check_outliners(seoul_air, c):
@@ -135,7 +135,7 @@ def check_outliners(seoul_air, c):
         col[col > ceiling] = mean_v    
 
 
-# In[10]:
+# In[ ]:
 
 
 for c in ["temperature(C)",	"feel_like(C)",	"wind_speed(km/h)",	"wind_gust(km/h)", "cloud(%)", "humidity(%)", "rain(mm)", "pressure"]:
@@ -146,14 +146,14 @@ for c in ["temperature(C)",	"feel_like(C)",	"wind_speed(km/h)",	"wind_gust(km/h)
 # 
 # We have to check which datetime data is missing and interpolate it. The simplest way is to filling it with near by neighbors or average values of near by neighbors.
 
-# In[11]:
+# In[ ]:
 
 
 air_weather = pd.merge(weather, seoul_air, on='datetime', how='outer')
 air_weather[air_weather['pm10_conc'].isnull()]
 
 
-# In[12]:
+# In[ ]:
 
 
 air_weather2 = air_weather.interpolate(method='linear')
@@ -164,7 +164,7 @@ air_weather2[air_weather['pm10_conc'].isnull()]
 
 # ***Plot correlation to first understand feature interactions***
 
-# In[13]:
+# In[ ]:
 
 
 corr = seoul_air.iloc[:,1:7].corr()
@@ -175,7 +175,7 @@ plt.show()
 
 # ***Align 1h to check correlation with previous hour***
 
-# In[14]:
+# In[ ]:
 
 
 def concat_dataframe(df, timeshift=1):
@@ -185,7 +185,7 @@ def concat_dataframe(df, timeshift=1):
     return pd.concat([df1, df2], axis=1)
 
 
-# In[15]:
+# In[ ]:
 
 
 def plot_corr(df):
@@ -196,13 +196,13 @@ def plot_corr(df):
     return align_corr
 
 
-# In[16]:
+# In[ ]:
 
 
 align1 = concat_dataframe(seoul_air.iloc[:,1:7], 1)
 
 
-# In[17]:
+# In[ ]:
 
 
 plot_corr(align1)
@@ -210,7 +210,7 @@ plot_corr(align1)
 
 # ***Align 4h to check correlation with 4 hours ago***
 
-# In[18]:
+# In[ ]:
 
 
 align4 = concat_dataframe(seoul_air.iloc[:,1:7], 4)
@@ -219,19 +219,19 @@ plot_corr(align4)
 
 # ***Plot weather & air quality together***
 
-# In[19]:
+# In[ ]:
 
 
 plot_corr(air_weather2)
 
 
-# In[20]:
+# In[ ]:
 
 
 air_weather4 = concat_dataframe(air_weather2, 4)
 
 
-# In[21]:
+# In[ ]:
 
 
 plot_corr(air_weather4)
@@ -239,13 +239,13 @@ plot_corr(air_weather4)
 
 # ### 3.6 Training, Testing Split
 
-# In[22]:
+# In[ ]:
 
 
 target = ['pm2_5_conc', 'pm10_conc']
 
 
-# In[23]:
+# In[ ]:
 
 
 def build_dataset(timeshift=1):
@@ -262,7 +262,7 @@ def build_dataset(timeshift=1):
 
 # ***Create training dataset to predict time ahead: 1h, 4h, 8h, 12h, 16h, 24h***
 
-# In[24]:
+# In[ ]:
 
 
 X1_train, y1_train, X1_test, y1_test = build_dataset(1)
@@ -276,7 +276,7 @@ X24_train, y24_train, X24_test, y24_test = build_dataset(24)
 
 # ## 4. Model Construction
 
-# In[25]:
+# In[ ]:
 
 
 import xgboost as xgb
@@ -285,7 +285,7 @@ from sklearn.metrics import mean_absolute_error
 
 # ***Create simple XGBoost model for corresponding dataset***
 
-# In[26]:
+# In[ ]:
 
 
 def plot_pred(pred, label):
@@ -298,7 +298,7 @@ def plot_pred(pred, label):
     plt.show()
 
 
-# In[27]:
+# In[ ]:
 
 
 model1 = xgb.XGBRegressor().fit(X1_train, y1_train)
@@ -306,13 +306,13 @@ pred1 = model1.predict(X1_test)
 mean_absolute_error(pred1, y1_test)
 
 
-# In[28]:
+# In[ ]:
 
 
 plot_pred(pred1, y1_test)
 
 
-# In[29]:
+# In[ ]:
 
 
 model4 = xgb.XGBRegressor().fit(X4_train, y4_train)
@@ -320,13 +320,13 @@ pred4 = model4.predict(X4_test)
 mean_absolute_error(pred4, y4_test)
 
 
-# In[30]:
+# In[ ]:
 
 
 plot_pred(pred4, y4_test)
 
 
-# In[31]:
+# In[ ]:
 
 
 model8 = xgb.XGBRegressor().fit(X8_train, y8_train)
@@ -334,13 +334,13 @@ pred8 = model8.predict(X8_test)
 mean_absolute_error(pred8, y8_test)
 
 
-# In[32]:
+# In[ ]:
 
 
 plot_pred(pred8, y8_test)
 
 
-# In[33]:
+# In[ ]:
 
 
 model12 = xgb.XGBRegressor().fit(X12_train, y12_train)
@@ -348,13 +348,13 @@ pred12 = model8.predict(X12_test)
 mean_absolute_error(pred12, y12_test)
 
 
-# In[34]:
+# In[ ]:
 
 
 plot_pred(pred12, y12_test)
 
 
-# In[35]:
+# In[ ]:
 
 
 model24 = xgb.XGBRegressor().fit(X24_train, y24_train)
@@ -362,7 +362,7 @@ pred24 = model24.predict(X24_test)
 mean_absolute_error(pred24, y24_test)
 
 
-# In[36]:
+# In[ ]:
 
 
 plot_pred(pred24, y24_test)

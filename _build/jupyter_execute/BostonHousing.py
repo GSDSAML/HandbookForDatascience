@@ -69,7 +69,7 @@ rawdata.skew().abs().sort_values()
 #     - Skewness <= 1, mean should be used to process outlier
 #     - Skewness > 1, median should be used to process outlier
 
-# In[4]:
+# In[ ]:
 
 
 # load data from csv 
@@ -117,7 +117,7 @@ def load_csv(filename, cols=None, header=None):
     return data
 
 
-# In[5]:
+# In[ ]:
 
 
 processed_data = load_csv(path + 'housing_10X_outlier_missing.csv', header=0)
@@ -125,20 +125,20 @@ processed_data = load_csv(path + 'housing_10X_outlier_missing.csv', header=0)
 
 # ### 1.2 Dataset preparation
 
-# In[6]:
+# In[ ]:
 
 
 X = processed_data.iloc[:,1:14]
 y = processed_data['MEDV']
 
 
-# In[7]:
+# In[ ]:
 
 
 from sklearn.model_selection import train_test_split
 
 
-# In[8]:
+# In[ ]:
 
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
@@ -151,7 +151,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # - Random Forest
 # - XGBoost
 
-# In[9]:
+# In[ ]:
 
 
 from sklearn.metrics import mean_absolute_error as mae
@@ -160,7 +160,7 @@ from sklearn.tree import DecisionTreeRegressor
 import xgboost as xgb
 
 
-# In[10]:
+# In[ ]:
 
 
 dtree = DecisionTreeRegressor().fit(X_train, y_train)
@@ -168,7 +168,7 @@ dt_pred = dtree.predict(X_test)
 print("mae loss of decision tree", mae(dt_pred, y_test))
 
 
-# In[11]:
+# In[ ]:
 
 
 # define random forest regressor
@@ -180,7 +180,7 @@ mae_loss = mae(y_pred, y_test)  # Evaluating the Algorithm by SKLearn
 print("mae loss of random forest:%.2f" % mae_loss)
 
 
-# In[12]:
+# In[ ]:
 
 
 xgb_model = xgb.XGBRFRegressor().fit(X_train, y_train)
@@ -190,14 +190,14 @@ print("mae loss of xgb", mae(xgb_pred, y_test))
 
 # ## 3. Feature Engineering
 
-# In[13]:
+# In[ ]:
 
 
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-# In[14]:
+# In[ ]:
 
 
 corr = processed_data.iloc[:,1:].corr()
@@ -208,7 +208,7 @@ plt.show()
 
 # ***Strategy 1: Select high correlated features using Pearson Correlation***
 
-# In[15]:
+# In[ ]:
 
 
 # get abs(correlation) between attributes and MEDV
@@ -220,7 +220,7 @@ high_corr_var = full_data_corr_wMEDV[full_data_corr_wMEDV > 0.5].keys()
 high_corr_var
 
 
-# In[16]:
+# In[ ]:
 
 
 xgb_model2 = xgb.XGBRFRegressor().fit(X_train[['LSTAT', 'INDUS', 'TAX', 'NOX', 'RM', 'AGE', 'RAD']], y_train)
@@ -230,13 +230,13 @@ print("mae loss of xgb", mae(xgb_pred2, y_test))
 
 # ***Strategy 2: Using Feature Selection Feature of Sklearn***
 
-# In[17]:
+# In[ ]:
 
 
 from sklearn.feature_selection import RFE
 
 
-# In[18]:
+# In[ ]:
 
 
 xgb_model2 = xgb.XGBRFRegressor()
@@ -248,7 +248,7 @@ rfe_pred = xgb_model2.predict(x_test_rfe)
 print("mae loss of xgb w/ rfe", mae(rfe_pred, y_test))
 
 
-# In[19]:
+# In[ ]:
 
 
 lowest = 9999
@@ -267,7 +267,7 @@ for i in range(13):
 print(lowest, best_n)
 
 
-# In[20]:
+# In[ ]:
 
 
 lowest = 9999
@@ -289,7 +289,7 @@ print(lowest, best_n)
 # ## 4. Model Explanation
 # We will explain model prediction using SHAP
 
-# In[21]:
+# In[ ]:
 
 
 import shap
@@ -298,7 +298,7 @@ shap.initjs()
 
 # ### 4.1 SHAP Initialization
 
-# In[22]:
+# In[ ]:
 
 
 # shap will automatically select explainer for a given model.
@@ -316,7 +316,7 @@ shap_values = explainer(X_train)
 # 1. Bee plot helps us understand outcome values corresponding to high/low values of features
 # 2. Bar plot presents a global view of feature importance, which don't consider sign (pos/neg) of the contribution.
 
-# In[23]:
+# In[ ]:
 
 
 shap.summary_plot(shap_values)
@@ -324,7 +324,7 @@ shap.summary_plot(shap_values)
 
 # As can be seen, higher LSTAT values correspond to lower SHAP values. LSTAT is the ratio of lower status of the population. It means that the more low-income population is, the less the price is. Similarly, the bigger the more expensive.
 
-# In[24]:
+# In[ ]:
 
 
 shap.summary_plot(shap_values, plot_type='bar')
@@ -332,13 +332,13 @@ shap.summary_plot(shap_values, plot_type='bar')
 
 # ***Then, we show attribution of instance predictions***
 
-# In[25]:
+# In[ ]:
 
 
 shap.force_plot(explainer.expected_value, shap_values[0].values, features=X_train.columns)
 
 
-# In[26]:
+# In[ ]:
 
 
 shap.force_plot(explainer.expected_value, shap_values[100].values, features=X_train.columns)
