@@ -17,22 +17,14 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-# Skewness of each attribute
-# cols = ["CRIM","ZN","INDUS","CHAS","NOX","RM","AGE","DIS","RAD","TAX","PTRATIO","B","LSTAT","MEDV"]
-rawdata = pd.read_csv(path + '/housing_10X_outlier_missing.csv', header=0)
-rawdata[rawdata == -1] = np.nan
-rawdata.skew().abs().sort_values()
+cr_data = pd.read_csv(folder + "/estimated_crimes.csv")
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mFileNotFoundError[0m                         Traceback (most recent call last)
-[0;32m<ipython-input-3-2f5de5a5bbd8>[0m in [0;36m<module>[0;34m[0m
-[1;32m      1[0m [0;31m# Skewness of each attribute[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
-[1;32m      2[0m [0;31m# cols = ["CRIM","ZN","INDUS","CHAS","NOX","RM","AGE","DIS","RAD","TAX","PTRATIO","B","LSTAT","MEDV"][0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
-[0;32m----> 3[0;31m [0mrawdata[0m [0;34m=[0m [0mpd[0m[0;34m.[0m[0mread_csv[0m[0;34m([0m[0mpath[0m [0;34m+[0m [0;34m'/housing_10X_outlier_missing.csv'[0m[0;34m,[0m [0mheader[0m[0;34m=[0m[0;36m0[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
-[0m[1;32m      4[0m [0mrawdata[0m[0;34m[[0m[0mrawdata[0m [0;34m==[0m [0;34m-[0m[0;36m1[0m[0;34m][0m [0;34m=[0m [0mnp[0m[0;34m.[0m[0mnan[0m[0;34m[0m[0;34m[0m[0m
-[1;32m      5[0m [0mrawdata[0m[0;34m.[0m[0mskew[0m[0;34m([0m[0;34m)[0m[0;34m.[0m[0mabs[0m[0;34m([0m[0;34m)[0m[0;34m.[0m[0msort_values[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
-
+[0;32m<ipython-input-3-6cc5149f2872>[0m in [0;36m<module>[0;34m[0m
+[0;32m----> 1[0;31m [0mcr_data[0m [0;34m=[0m [0mpd[0m[0;34m.[0m[0mread_csv[0m[0;34m([0m[0mfolder[0m [0;34m+[0m [0;34m"/estimated_crimes.csv"[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m
 [0;32m~/anaconda3/lib/python3.8/site-packages/pandas/util/_decorators.py[0m in [0;36mwrapper[0;34m(*args, **kwargs)[0m
 [1;32m    309[0m                     [0mstacklevel[0m[0;34m=[0m[0mstacklevel[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
 [1;32m    310[0m                 )
@@ -89,6 +81,6 @@ rawdata.skew().abs().sort_values()
 [0m[1;32m    703[0m                 [0mhandle[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
 [1;32m    704[0m                 [0mioargs[0m[0;34m.[0m[0mmode[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
 
-[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: '/home/alexbui/workspace/HandbookForDatascience/notebooks/data//housing_10X_outlier_missing.csv'
-FileNotFoundError: [Errno 2] No such file or directory: '/home/alexbui/workspace/HandbookForDatascience/notebooks/data//housing_10X_outlier_missing.csv'
+[0;31mFileNotFoundError[0m: [Errno 2] No such file or directory: './data/crime_rate/estimated_crimes.csv'
+FileNotFoundError: [Errno 2] No such file or directory: './data/crime_rate/estimated_crimes.csv'
 
