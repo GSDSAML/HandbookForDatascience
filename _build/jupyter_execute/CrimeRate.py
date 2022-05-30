@@ -6,7 +6,7 @@
 # In[1]:
 
 
-folder = "/home/alexbui/workspace/HandbookForDatascience/notebooks/data/crime_rate"
+folder = "/home/alexbui/workspace2022/HandbookForDatascience/notebooks/data/crime_rate"
 
 
 # In[2]:
@@ -26,7 +26,7 @@ import pandas as pd
 cr_data = pd.read_csv(folder + "/estimated_crimes.csv")
 
 
-# In[ ]:
+# In[4]:
 
 
 cr_data = cr_data[cr_data['year'] <= 2019]
@@ -34,20 +34,20 @@ cr_data.rename(columns={'state_name':'state name'}, inplace=True)
 cr_data.drop(['burglary', 'larceny', 'motor_vehicle_theft'], axis=1, inplace=True)
 
 
-# In[ ]:
+# In[5]:
 
 
 cr_data['total crime'] = cr_data['violent_crime'] + cr_data['homicide']                             + cr_data['robbery'] + cr_data['aggravated_assault'] + cr_data['property_crime']
 cr_data['overall crime rate'] = cr_data['total crime'] / cr_data['population']
 
 
-# In[ ]:
+# In[6]:
 
 
 cr_data
 
 
-# In[ ]:
+# In[7]:
 
 
 demography = pd.read_csv(folder + "/demography.csv")
@@ -56,7 +56,7 @@ demography.columns = [c.lower() for c in demography.columns]
 
 # We will remove all columns with absolute values as we want to estimate crime rate.
 
-# In[ ]:
+# In[8]:
 
 
 def remove_absolute_columns(df, keeps):
@@ -74,20 +74,20 @@ def clean_column_name(df):
     df.columns = new_cols
 
 
-# In[ ]:
+# In[9]:
 
 
 keeps = ['year', 'state name', 'total population']
 remove_absolute_columns(demography, keeps)
 
 
-# In[ ]:
+# In[10]:
 
 
 clean_column_name(demography)
 
 
-# In[ ]:
+# In[11]:
 
 
 demography
@@ -95,7 +95,7 @@ demography
 
 # ***Load economic data***
 
-# In[ ]:
+# In[12]:
 
 
 economics = pd.read_csv(folder + "/economics.csv")
@@ -105,7 +105,7 @@ economics.drop(['percent of civilian labor force','percent!!income and benefits 
 clean_column_name(economics)
 
 
-# In[ ]:
+# In[13]:
 
 
 eco_new_names = {
@@ -169,7 +169,7 @@ economics.rename(columns=eco_new_names, inplace=True)
 
 # ***Load social characteristic data***
 
-# In[ ]:
+# In[14]:
 
 
 social = pd.read_csv(folder + "/social_characteristics.csv")
@@ -177,7 +177,7 @@ social.columns = [c.lower() for c in social.columns]
 clean_column_name(social)
 
 
-# In[ ]:
+# In[15]:
 
 
 social
@@ -185,13 +185,13 @@ social
 
 # ***Merge all together***
 
-# In[ ]:
+# In[16]:
 
 
 merge_data = cr_data.set_index(['year', 'state name'])                     .join(demography.set_index(['year', 'state name']), how='left')                     .join(economics.set_index(['year', 'state name']), how='left')                     .join(social.set_index(['year', 'state name']), how='left')
 
 
-# In[ ]:
+# In[17]:
 
 
 merged_columns = merge_data.columns
@@ -207,28 +207,28 @@ for c in merged_columns:
 # 
 # [1] The book of why, Judea Pearl
 
-# In[ ]:
+# In[18]:
 
 
 data_corr = merge_data.corr()
 data_corr
 
 
-# In[ ]:
+# In[19]:
 
 
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-# In[ ]:
+# In[20]:
 
 
 merge_data_cp = merge_data.copy()
 merge_data_cp['total crime per 1k population'] = merge_data['total crime'] / merge_data['population'] * 1000
 
 
-# In[ ]:
+# In[21]:
 
 
 fig, ax = plt.subplots(figsize=(5, 5))
@@ -238,13 +238,13 @@ ax.set_title('Total Crime')
 
 # ***2. Filter columns w/ threshold***
 
-# In[ ]:
+# In[22]:
 
 
 crime_names = ["violent_crime","homicide","robbery","aggravated_assault","property_crime"]
 
 
-# In[ ]:
+# In[23]:
 
 
 columns = data_corr[(data_corr['total crime'] >= 0.1) | (data_corr['total crime'] <= -0.1)]['total crime']
@@ -256,7 +256,7 @@ columns = data_corr[(data_corr['total crime'] >= 0.1) | (data_corr['total crime'
 # 
 # Using data from previous year to predict the next year crime rate
 
-# In[ ]:
+# In[24]:
 
 
 def get_train_test_data(selected_data):
@@ -265,7 +265,7 @@ def get_train_test_data(selected_data):
     return train_data, test_data
 
 
-# In[ ]:
+# In[25]:
 
 
 def get_train_test_label(target_label, lb='overall crime rate'):
@@ -274,7 +274,7 @@ def get_train_test_label(target_label, lb='overall crime rate'):
     return train_label, test_label
 
 
-# In[ ]:
+# In[26]:
 
 
 def extract_label(merge_data, lb='overall crime rate'):
@@ -284,7 +284,7 @@ def extract_label(merge_data, lb='overall crime rate'):
     return target_label
 
 
-# In[ ]:
+# In[27]:
 
 
 target = 'overall crime rate'
@@ -297,7 +297,7 @@ for i, v in zip(columns.index, columns):
 selected_data = merge_data[selected_features]
 
 
-# In[ ]:
+# In[28]:
 
 
 selected_data = selected_data.reset_index()
@@ -308,7 +308,7 @@ train_label, test_label = get_train_test_label(target_label)
 
 # ### 2.2. Build a model to predict crime rate of USA
 
-# In[ ]:
+# In[29]:
 
 
 import shap
@@ -316,13 +316,13 @@ shap.initjs()
 from xgboost import XGBRegressor
 
 
-# In[ ]:
+# In[30]:
 
 
 from sklearn.metrics import mean_absolute_error as mae
 
 
-# In[ ]:
+# In[31]:
 
 
 def init_model(train_data, train_label):
@@ -330,7 +330,7 @@ def init_model(train_data, train_label):
     return model
 
 
-# In[ ]:
+# In[32]:
 
 
 model1 = init_model(train_data, train_label)
@@ -343,7 +343,7 @@ acc
 
 # ***Initialize explainer***
 
-# In[ ]:
+# In[33]:
 
 
 explainer1 = shap.Explainer(model1)
@@ -352,19 +352,19 @@ sh_values = explainer1(test_data)
 
 # ***Plotting global summarization***
 
-# In[ ]:
+# In[34]:
 
 
 shap.plots.bar(sh_values, max_display=10)
 
 
-# In[ ]:
+# In[35]:
 
 
 shap.plots.beeswarm(sh_values, max_display=10)
 
 
-# In[ ]:
+# In[36]:
 
 
 # you can printout a hierachical tree of feature interaction
@@ -389,7 +389,7 @@ shap.plots.beeswarm(sh_values, max_display=10)
 # 
 # Let's use K-mean for simplicity
 
-# In[ ]:
+# In[37]:
 
 
 import numpy as np
@@ -398,13 +398,13 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 
 
-# In[ ]:
+# In[38]:
 
 
 aggregated_data = merge_data.groupby(by='state_abbr').mean()
 
 
-# In[ ]:
+# In[39]:
 
 
 scaled_data = MinMaxScaler().fit_transform(aggregated_data)
@@ -414,7 +414,7 @@ scaled_data = pca.fit_transform(scaled_data)
 scaled_data = pd.DataFrame(scaled_data, index=aggregated_data.index, columns=['x1', 'x2'])
 
 
-# In[ ]:
+# In[40]:
 
 
 cluster_engine = KMeans(n_clusters=5)
@@ -422,7 +422,7 @@ cluster_engine.fit(scaled_data)
 clusters = cluster_engine.predict(scaled_data)
 
 
-# In[ ]:
+# In[41]:
 
 
 df_clusters = pd.DataFrame(np.concatenate([scaled_data, clusters[:, np.newaxis]], axis=1), index=aggregated_data.index, columns=['x1','x2','cluster'])
@@ -431,7 +431,7 @@ df_clusters = df_clusters.sort_values(by='cluster', axis=0)
 df_clusters
 
 
-# In[ ]:
+# In[42]:
 
 
 fig, ax = plt.subplots(figsize=(10,6))
@@ -449,7 +449,7 @@ plt.show()
 # 
 # K-mean result may be different at each execution time due to its initialization state.
 
-# In[ ]:
+# In[43]:
 
 
 states = target_label[(target_label['year'] == 2019)]['state name'].tolist()
@@ -459,31 +459,31 @@ for i, s in enumerate(states):
 state_index
 
 
-# In[ ]:
+# In[44]:
 
 
 shap.plots.waterfall(sh_values[27])
 
 
-# In[ ]:
+# In[45]:
 
 
 shap.plots.waterfall(sh_values[8])
 
 
-# In[ ]:
+# In[46]:
 
 
 shap.plots.waterfall(sh_values[1])
 
 
-# In[ ]:
+# In[47]:
 
 
 shap.plots.waterfall(sh_values[34])
 
 
-# In[ ]:
+# In[48]:
 
 
 shap.plots.waterfall(sh_values[17])
@@ -495,7 +495,7 @@ shap.plots.waterfall(sh_values[17])
 
 # ### 4.1 Homicide
 
-# In[ ]:
+# In[49]:
 
 
 h_crime_names = set(["total crime","overall crime rate","homicide","violent_crime","robbery","aggravated_assault","property_crime","burglary","larceny","motor_vehicle_theft"])
@@ -508,7 +508,7 @@ for i, v in zip(columns.index, columns):
     h_selected_features.append(i)
 
 
-# In[ ]:
+# In[50]:
 
 
 merge_data_2 = merge_data.copy()
@@ -520,13 +520,13 @@ h_target_label = extract_label(merge_data_2, 'homicide_rate')
 h_train_label, h_test_label = get_train_test_label(h_target_label, lb='homicide_rate')
 
 
-# In[ ]:
+# In[51]:
 
 
 h_model = init_model(h_train_data, h_train_label)
 
 
-# In[ ]:
+# In[52]:
 
 
 h_pred = h_model.predict(h_test_data)
@@ -534,20 +534,20 @@ acc = mae(h_test_label, h_pred)
 acc
 
 
-# In[ ]:
+# In[53]:
 
 
 h_explainer = shap.Explainer(h_model)
 sh_h_values = h_explainer(h_test_data)
 
 
-# In[ ]:
+# In[54]:
 
 
 shap.plots.bar(sh_h_values, max_display=20)
 
 
-# In[ ]:
+# In[55]:
 
 
 shap.plots.beeswarm(sh_h_values, max_display=20)
@@ -561,7 +561,7 @@ shap.plots.beeswarm(sh_h_values, max_display=20)
 
 # ### 4.2 Property Crime
 
-# In[ ]:
+# In[56]:
 
 
 p_crime_names = set(["total crime","overall crime rate","violent_crime","homicide","robbery","aggravated_assault","burglary","larceny","motor_vehicle_theft"])
@@ -574,7 +574,7 @@ for i, v in zip(columns.index, columns):
     p_selected_features.append(i)
 
 
-# In[ ]:
+# In[57]:
 
 
 merge_data_3 = merge_data.copy()
@@ -586,7 +586,7 @@ p_target_label = extract_label(merge_data_3, 'property_crime_rate')
 p_train_label, p_test_label = get_train_test_label(p_target_label, lb='property_crime_rate')
 
 
-# In[ ]:
+# In[58]:
 
 
 p_model = init_model(p_train_data, p_train_label)
@@ -595,20 +595,20 @@ acc = mae(p_test_label, p_pred)
 acc
 
 
-# In[ ]:
+# In[59]:
 
 
 p_explainer = shap.Explainer(p_model)
 sh_p_values = p_explainer(p_test_data)
 
 
-# In[ ]:
+# In[60]:
 
 
 shap.plots.bar(sh_p_values, max_display=20)
 
 
-# In[ ]:
+# In[61]:
 
 
 shap.plots.beeswarm(sh_p_values, max_display=20)
