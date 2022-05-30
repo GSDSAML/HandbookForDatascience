@@ -12,6 +12,7 @@ parts:
   - file: BostonHousing
   - file: LendingClub
   - file: AirPollution
+  - file: CrimeRate
 - caption: Infrastructure
   chapters:
   - file: Infrastructure
