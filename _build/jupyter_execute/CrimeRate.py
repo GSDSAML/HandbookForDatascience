@@ -6,7 +6,7 @@
 # In[1]:
 
 
-folder = "./data/crime_rate"
+folder = "/home/alexbui/workspace/HandbookForDatascience/notebooks/data/crime_rate"
 
 
 # In[2]:
