@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+mkdocs-material = "*"
+mkdocs-jupyter = "*"
+
+[dev-packages]
+numpy = "*"
+pandas = "*"
+seaborn = "*"
+scikit-learn = "*"
+ipykernel = "*"
+ipywidgets = "*"
+matplotlib = "*"
+xgboost = "*"
+shap = "*"
+hvplot = "*"
+gdown = "*"
+
+[requires]
+python_version = "3.10"
