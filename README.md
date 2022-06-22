@@ -2,8 +2,6 @@
 
 Handbook For Datascience
 
-
-
 # Setup
 
 ```bash
