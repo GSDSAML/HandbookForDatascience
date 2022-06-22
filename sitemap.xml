@@ -2,7 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/</loc>
-         <lastmod>2022-06-21</lastmod>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/1/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/2/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/3/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/4/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/LifeCycle/</loc>
+         <lastmod>2022-06-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
