@@ -1,4 +1,6 @@
-# Preface
+# Welcome
+
+## Preface
 
 The motivation to prepare a handbook for data science started in 2021. Professor Wen-Syan Li([Link to frofile](https://aml.gsds.snu.ac.kr/members#h.q483l1nrxq5h)) joined the Graduate School of Data Science (GSDS), Seoul National University (SNU) in March 2020, and he taught Machine Learning & Deep Learning courses in 2020 and 2021. Although there are many textbooks available on the market. However, most books focus on either statistical analysis or theorem  aspects of machine learning & deep learning, they do not satisfy one of the essential aspects of data science - hands-on experience and conduct tasks in the data science life cycle end to end. Much information is available on the internet: blob, seminars, conference tutorials, personal websites, Youtube, and online education service providers, like Coursera. It is time-consuming to allocate all the information, especially the information that is evolving and expanding at a fast speed.
 

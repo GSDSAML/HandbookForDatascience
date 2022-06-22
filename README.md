@@ -17,7 +17,7 @@ pipenv install requirements_win.txt
 ## vscode user settings
 
 * install the extenstion (vscode-yaml)[https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml]
-* add the following settings in `settings.json`
+* (optional) add the following settings in `settings.json`
 
     ```json
     {
