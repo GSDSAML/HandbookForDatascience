@@ -6,32 +6,117 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/</loc>
+         <loc>None</loc>
          <lastmod>2022-06-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/1/</loc>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/01.Introduction/</loc>
          <lastmod>2022-06-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/2/</loc>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/01.Introduction/1/</loc>
          <lastmod>2022-06-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/3/</loc>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/01.Introduction/2/</loc>
          <lastmod>2022-06-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/Introduction/4/</loc>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/01.Introduction/3/</loc>
          <lastmod>2022-06-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/LifeCycle/</loc>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/01.Introduction/4/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/01.Introduction/5/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/02.LifeCycle/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/02.LifeCycle/1/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/02.LifeCycle/2/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/02.LifeCycle/3/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/02.LifeCycle/4/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/03.MLOps/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/03.MLOps/1/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/03.MLOps/2/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/04.XAI/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/05.PFLG/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/06.AMLD/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/07.PHOS/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/08.Infrastructure/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/09.CaseStudy/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/10.SESP/</loc>
+         <lastmod>2022-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://gsdsaml.github.io/HandbookForLearningDatascience/11.Conclusion/</loc>
          <lastmod>2022-06-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
