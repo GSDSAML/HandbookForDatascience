@@ -31,3 +31,4 @@ pipenv install requirements_win.txt
 
 - [https://www.mkdocs.org/](https://www.mkdocs.org/)
 - [https://squidfunk.github.io/mkdocs-material/](https://squidfunk.github.io/mkdocs-material/)
+- [https://squidfunk.github.io/mkdocs-material/reference/admonitions/](https://squidfunk.github.io/mkdocs-material/reference/admonitions/)
