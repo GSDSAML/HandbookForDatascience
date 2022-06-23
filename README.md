@@ -27,6 +27,13 @@ pipenv install requirements_win.txt
     }
     ```
 
+## build
+
+```
+$ mkdocs build
+$ mkdocs gh-deploy --force
+```
+
 ## helpful documents
 
 - [https://www.mkdocs.org/](https://www.mkdocs.org/)
