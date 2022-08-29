@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 mkdocs-material = "*"
-mkdocs-jupyter = "*"
 mkdocs-literate-nav = "*"
 mkdocs-section-index = "*"
 
