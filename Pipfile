@@ -7,6 +7,8 @@ name = "pypi"
 mkdocs-material = "*"
 mkdocs-literate-nav = "*"
 mkdocs-section-index = "*"
+mkdocs = "*"
+colorama = "*"
 
 [dev-packages]
 numpy = "*"
